@@ -1,6 +1,8 @@
-import '../App.css';
+import '../../App.css';
 import React, { useState, useEffect } from 'react';
 import Axios from 'axios';
+import HeroSection from "../HeroSection";
+import Cards from '../Cards';
 
 function Home() {
   const [movieName, setMovieName] = useState('');
@@ -47,7 +49,10 @@ function Home() {
   };
 
   return (
-    <div className="App">
+    <>
+      <HeroSection />
+
+      <div className="App">
       <h1>CRUD APPLICATION</h1>
 
       <div className="form">
@@ -88,9 +93,13 @@ function Home() {
               <button onClick={() => {updateReview(val.id);}}>Update</button>
             </div>
           );
-        })}
+          })}
+        </div>
       </div>
-    </div>
+
+    <Cards />
+  </>
+    
   );
 }
 

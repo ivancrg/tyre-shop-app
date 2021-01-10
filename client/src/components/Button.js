@@ -1,25 +1,48 @@
-import React from 'react'
-import './Button.css'
-import { Link } from 'react-router-dom'
+import React from "react";
+import "./Button.css";
+import { Link } from "react-router-dom";
 
 //arrays with css classes
-const STYLES = ['btn--primary', 'btn--outline'];
-const SIZES = ['btn--medium', 'btn--large'];
+const STYLES = ["btn--primary", "btn--outline"];
+const SIZES = ["btn--medium", "btn--large"];
 
-export const Button = ({ children, type, onClick, buttonStyle, buttonSize }) => {
-    const checkButtonStyle = STYLES.includes(buttonStyle) ? buttonStyle : STYLES[0];
-    const checkButtonSize = SIZES.includes(buttonSize) ? buttonSize : SIZES[0];
+export const Button = ({
+  children,
+  type,
+  onclick,
+  buttonstyle,
+  buttonsize,
+  linkpath,
+  linkon,
+}) => {
+  const checkButtonStyle = STYLES.includes(buttonstyle)
+    ? buttonstyle
+    : STYLES[0];
+  const checkButtonSize = SIZES.includes(buttonsize) ? buttonsize : SIZES[0];
 
-    return(
-        <Link to="/Login" className='btn-mobile'>
-            <button
-                className={`btn ${checkButtonStyle} ${checkButtonSize}`}
-                onClick={onClick}
-                type={type}    
-            >
-                {children}
-                {/*kada stvorimo element Button, sav sadržaj se prosljeđuje ovdje kao children (npr. tekst Buttona) */}
-            </button>
-        </Link>
+  if (linkon) {
+    return (
+      <Link to={linkpath} className="btn-mobile">
+        <button
+          className={`btn ${checkButtonStyle} ${checkButtonSize}`}
+          onClick={onclick}
+          type={type}
+        >
+          {children}
+          {/*kada stvorimo element Button, sav sadržaj se prosljeđuje ovdje kao children (npr. tekst Buttona) */}
+        </button>
+      </Link>
     );
+  } else {
+    return (
+      <button
+        className={`btn ${checkButtonStyle} ${checkButtonSize}`}
+        onClick={onclick}
+        type={type}
+      >
+        {children}
+        {/*kada stvorimo element Button, sav sadržaj se prosljeđuje ovdje kao children (npr. tekst Buttona) */}
+      </button>
+    );
+  }
 };

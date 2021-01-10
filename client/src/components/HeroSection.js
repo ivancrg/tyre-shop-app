@@ -1,33 +1,39 @@
-import React from 'react'
-import "../App.css"
-import "./HeroSection.css"
-import { Button } from "./Button"
+import React from "react";
+import "../App.css";
+import "./HeroSection.css";
+import { Button } from "./Button";
 
 function HeroSection() {
-    return (
-        <div className="hero-container">
-            <video src="/videos/video-2.mp4" autoPlay loop muted />
+  return (
+    <div className="hero-container">
+      <video src="/videos/video-2.mp4" autoPlay loop muted />
 
-            <h1>Gumiservis GS.</h1>
-            <p>Opis.</p>
+      <h1>Gumiservis GS.</h1>
+      <p>Opis.</p>
 
-            <div className="hero-btns">
-            <Button className="btns"
-                    buttonStyle="btn--outline"
-                    buttonSize="btn--large"
-                >
-                    KRENI
-                </Button>
+      <div className="hero-btns">
+        <Button
+          linkon="1"
+          className="btns"
+          buttonstyle="btn--outline"
+          buttonsize="btn--large"
+          linkpath="/offer"
+        >
+          KRENI
+        </Button>
 
-                <Button className="btns"
-                    buttonStyle="btn--primary"
-                    buttonSize="btn--large"
-                >
-                    PROCES NARUDŽBE <i className="far fa-play-circle" />
-                </Button>
-            </div>
-        </div>
-    )
+        <Button
+          linkon="1"
+          className="btns"
+          buttonstyle="btn--primary"
+          buttonsize="btn--large"
+          linkpath="/appointment"
+        >
+          PROCES NARUDŽBE <i className="far fa-play-circle" />
+        </Button>
+      </div>
+    </div>
+  );
 }
 
-export default HeroSection
+export default HeroSection;

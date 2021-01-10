@@ -25,6 +25,29 @@
   font-size: 100px;
 }
 
+.appointmentManager#root--div {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, 0%);
+  width: 75%;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.appointmentManager#paper {
+  max-width: none;
+}
+
+.appointmentManager#container {
+  max-width: none;
+}
+
+.appointmentManager#pageSelect {
+  justify-self: end;
+}
+
 .offer {
   background-image: url("./images/img-2.jpg");
   background-position: center;

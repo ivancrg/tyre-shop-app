@@ -1,30 +1,46 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const mysql = require('mysql');
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const mysql = require("mysql");
 
 const db = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'tyre-shop-app'
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "tyre-shop-app",
 });
 
 app.use(cors());
 app.use(express.json()); //grabbing info from frontend as json
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/api/getOffer', (req, res) => {
-    console.log('Running on 3001/api/get');
-    
-    const sqlSelect = "SELECT * FROM offer";
+app.get("/api/getOffers", (req, res) => {
+  console.log("Running on 3001/api/getOffers");
 
-    db.query(sqlSelect, (err, result) => {
-        res.send(result);
-        console.log('Result: '); console.log(result);
-        console.log('Error: '); console.log(err);
-    });
+  const sqlSelect = "SELECT * FROM offers";
+
+  db.query(sqlSelect, (err, result) => {
+    res.send(result);
+    console.log("Result: ");
+    console.log(result);
+    console.log("Error: ");
+    console.log(err);
+  });
+});
+
+app.get("/api/getAppointments", (req, res) => {
+  console.log("Running on 3001/api/getAppointments");
+
+  const sqlSelect = "SELECT * FROM orders";
+
+  db.query(sqlSelect, (err, result) => {
+    res.send(result);
+    console.log("Result: ");
+    console.log(result);
+    console.log("Error: ");
+    console.log(err);
+  });
 });
 
 // app.post('/api/insert', (req, res) => {
@@ -44,9 +60,9 @@ app.get('/api/getOffer', (req, res) => {
 //     console.log('Running on 3001/api/delete');
 
 //     const id = req.params.movieID; //varijabla iz App.js
-    
+
 //     const sqlDelete = "DELETE FROM movie_reviews WHERE id = ?";
-    
+
 //     db.query(sqlDelete, id, (err, result) => {
 //         console.log('Result: '); console.log(result);
 //         console.log('Error: '); console.log(err);
@@ -58,7 +74,7 @@ app.get('/api/getOffer', (req, res) => {
 
 //     const id = req.body.movieID;
 //     const review = req.body.movieReview;
-    
+
 //     const sqlUpdate = "UPDATE movie_reviews SET movieReview = ? WHERE id = ?";
 
 //     db.query(sqlUpdate, [review, id], (err, result) => {
@@ -68,5 +84,5 @@ app.get('/api/getOffer', (req, res) => {
 // });
 
 app.listen(3001, () => {
-    console.log('Running on port 3001');
+  console.log("Running on port 3001");
 });

@@ -10,6 +10,11 @@ import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import { Button } from "@material-ui/core";
+import Popup from "reactjs-popup";
+import "reactjs-popup/dist/index.css";
+import { makeStyles } from "@material-ui/core/styles";
+import TextField from "@material-ui/core/TextField";
+import { parse, format, toDate } from "date-fns";
 
 const columns = [
   { id: "idorder", label: "ID", minWidth: 15 },
@@ -21,11 +26,24 @@ const columns = [
   { id: "phone_no", label: "Mobitel", minWidth: 50 },
   { id: "comments", label: "Komentar", minWidth: 75 },
   { id: "service_date_time", label: "Termin", minWidth: 50 },
+  { id: "receipt_no", label: "Broj računa", minWidth: 50 },
 ];
+
+const useStyles = makeStyles((theme) => ({
+  textField: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: 225,
+  },
+}));
 
 function AppointmentManager() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [appointmentList, setAppointmentList] = useState([]);
+  const [appointmentDate, setAppointmentDate] = useState(
+    format(toDate(new Date()), "yyyy-MM-dd'T'HH:mm")
+  );
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -36,37 +54,42 @@ function AppointmentManager() {
     setPage(0);
   };
 
-  const [appointmentList, setAppointmentList] = useState([]);
-
   useEffect(() => {
-    Axios.get("http://192.168.5.90:3001/api/getAppointments").then(
-      (response) => {
-        setAppointmentList(response.data);
-      }
-    );
+    Axios.get("http://localhost:3001/api/getAppointments").then((response) => {
+      setAppointmentList(response.data);
+    });
   }, []);
 
-  function editAppointment(id) {
-    console.log(id);
-    console.log("edit");
+  function refreshTableData() {
+    Axios.get("http://localhost:3001/api/getAppointments").then((response) => {
+      setAppointmentList(response.data);
+    });
+  }
+
+  function editAppointment(id, newAppointment, receipt) {
+    Axios.put("http://localhost:3001/api/editAppointment", {
+      id: id,
+      newAppointment: newAppointment,
+      receipt: receipt,
+    });
+
+    refreshTableData();
+    refreshTableData();
   }
 
   function deleteAppointment(id) {
-    console.log(id);
-    console.log("delete");
-
     Axios.delete(`http://localhost:3001/api/deleteAppointment/${id}`);
+
+    refreshTableData();
+    refreshTableData();
   }
 
-  function confirmAppointment(id) {
-    console.log(id);
-    console.log("confirm");
-  }
+  const classes = useStyles();
 
   return (
-    <div class="appointmentManager" id="root--div">
-      <Paper class="appointmentManager" id="paper">
-        <TableContainer class="appointmentManager" id="container">
+    <div className="appointmentManager">
+      <Paper>
+        <TableContainer>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
@@ -82,7 +105,6 @@ function AppointmentManager() {
 
                 <TableCell key="title_edit">Izmjena termina</TableCell>
                 <TableCell key="title_delete">Brisanje termina</TableCell>
-                <TableCell key="title_confirm">Potvrda termina</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -98,14 +120,21 @@ function AppointmentManager() {
                     >
                       {columns.map((column) => {
                         const value = row[column.id] ? row[column.id] : "/";
-                        //if(value === null) value = "/";
+
                         return (
                           <TableCell
                             key={column.id + row["idorder"]}
                             align={column.align}
                           >
-                            {column.format && typeof value === "number"
-                              ? column.format(value)
+                            {value !== "/" && column.id === "service_date_time"
+                              ? format(
+                                  parse(
+                                    value.toString(),
+                                    "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
+                                    new Date()
+                                  ),
+                                  "yyyy-MM-dd' u 'HH:mm"
+                                )
                               : value}
                           </TableCell>
                         );
@@ -113,22 +142,122 @@ function AppointmentManager() {
 
                       <TableCell
                         key={"edit_appointment" + row["idorder"]}
-                        align="right"
+                        align="center"
                       >
-                        <Button
-                          linkon="0"
-                          onClick={() => {
-                            editAppointment(row["idorder"]);
-                          }}
-                          buttonstyle="btn--primary"
+                        <Popup
+                          trigger={
+                            <Button linkon="0" buttonstyle="btn--primary">
+                              IZMJENI
+                            </Button>
+                          }
+                          maxWidth="200px"
+                          maxHeight="auto"
+                          modal
+                          nested
+                          contentStyle={{ width: "275px" }}
                         >
-                          Izmjeni
-                        </Button>
+                          {(close) => (
+                            <div className="modal">
+                              <div className="header"> Odabir termina </div>
+                              <div className="content">
+                                <form className="container" noValidate>
+                                  <TextField
+                                    id={"datetime-local" + row["idorder"]}
+                                    label="Uredi termin..."
+                                    type="datetime-local"
+                                    required
+                                    defaultValue={format(
+                                      toDate(new Date()),
+                                      "yyyy-MM-dd'T'HH:mm"
+                                    ).toString()}
+                                    className={classes.textField}
+                                    InputLabelProps={{
+                                      shrink: true,
+                                    }}
+                                  />
+                                  {!row["receipt_no"] ? (
+                                    <TextField
+                                      id={"receipt-no-input" + row["idorder"]}
+                                      label="Upiši broj računa..."
+                                    />
+                                  ) : (
+                                    ""
+                                  )}
+                                </form>
+                              </div>
+
+                              <div className="actions">
+                                <Button
+                                  buttonstyle="btn--primary"
+                                  linkon="0"
+                                  onClick={() => {
+                                    setAppointmentDate(
+                                      document.getElementById(
+                                        "datetime-local" + row["idorder"]
+                                      ).value
+                                    );
+
+                                    let date = parse(
+                                      appointmentDate
+                                        .toString()
+                                        .replace("T", " "),
+                                      "yyyy-MM-dd HH:mm",
+                                      new Date()
+                                    );
+
+                                    if (
+                                      date.toString() !== "Invalid Date" &&
+                                      date.toString() !== ""
+                                    ) {
+                                      if (!row["receipt_no"]) {
+                                        //nema racun, treba procitat je li unesen
+                                        var receipt = document
+                                          .getElementById(
+                                            "receipt-no-input" + row["idorder"]
+                                          )
+                                          .value.toString()
+                                          .replace(/\s/g, "");
+
+                                        if (receipt === "") {
+                                          alert("Nevaljan unos broja računa!");
+                                        } else {
+                                          editAppointment(
+                                            row["idorder"],
+                                            appointmentDate
+                                              .toString()
+                                              .replace("T", " "),
+                                            receipt
+                                          );
+
+                                          close();
+                                        }
+                                      } else {
+                                        editAppointment(
+                                          row["idorder"],
+                                          appointmentDate
+                                            .toString()
+                                            .replace("T", " "),
+                                          ""
+                                        );
+
+                                        close();
+                                      }
+                                    } else {
+                                      alert("Nevaljan unos termina!");
+                                    }
+                                  }}
+                                >
+                                  POTVRDI
+                                </Button>
+                              </div>
+                            </div>
+                          )}
+                        </Popup>
                       </TableCell>
 
                       <TableCell
                         key={"delete_appointment" + row["idorder"]}
-                        align="right"
+                        align="center"
                       >
                         <Button
                           linkon="0"
@@ -137,22 +266,7 @@ function AppointmentManager() {
                           }}
                           buttonstyle="btn--primary"
                         >
-                          Obriši
-                        </Button>
-                      </TableCell>
-
-                      <TableCell
-                        key={"confirm_appointment" + row["idorder"]}
-                        align="right"
-                      >
-                        <Button
-                          linkon="0"
-                          onClick={() => {
-                            confirmAppointment(row["idorder"]);
-                          }}
-                          buttonstyle="btn--primary"
-                        >
-                          Potvrdi
+                          OBRIŠI
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -170,8 +284,6 @@ function AppointmentManager() {
           page={page}
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
-          class="appointmentManager"
-          id="pageSelect"
         />
       </Paper>
     </div>

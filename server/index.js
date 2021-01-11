@@ -22,8 +22,8 @@ app.get("/api/getOffers", (req, res) => {
 
   db.query(sqlSelect, (err, result) => {
     res.send(result);
-    console.log("Result: ");
-    console.log(result);
+    //console.log("Result: ");
+    //console.log(result);
     console.log("Error: ");
     console.log(err);
   });
@@ -36,15 +36,15 @@ app.get("/api/getAppointments", (req, res) => {
 
   db.query(sqlSelect, (err, result) => {
     res.send(result);
-    console.log("Result: ");
-    console.log(result);
+    //console.log("Result: ");
+    //console.log(result);
     console.log("Error: ");
     console.log(err);
   });
 });
 
 app.delete("/api/deleteAppointment/:idOrder", (req, res) => {
-  console.log("Running on 3001/api/update");
+  console.log("Running on 3001/api/deleteAppointment");
 
   const id = req.params.idOrder;
   console.log(id);
@@ -52,11 +52,37 @@ app.delete("/api/deleteAppointment/:idOrder", (req, res) => {
   const sqlDelete = "DELETE FROM orders WHERE idorder = ?";
 
   db.query(sqlDelete, id, (err, result) => {
-    console.log("Result: ");
-    console.log(result);
+    //console.log("Result: ");
+    //console.log(result);
     console.log("Error: ");
     console.log(err);
   });
+});
+
+app.put("/api/editAppointment", (req, res) => {
+  console.log("Running on 3001/api/editAppointment");
+
+  const id = req.body.id;
+  const appointment = req.body.newAppointment;
+  const receipt = req.body.receipt;
+
+  if (receipt === "") {
+    const sqlUpdate =
+      "UPDATE orders SET service_date_time = ? WHERE idorder = ?";
+    db.query(sqlUpdate, [appointment, id], (err, result) => {
+      //console.log("Result: "); console.log(result);
+      console.log("Error: ");
+      console.log(err);
+    });
+  } else {
+    const sqlUpdate =
+      "UPDATE orders SET service_date_time = ?, receipt_no = ? WHERE idorder = ?";
+    db.query(sqlUpdate, [appointment, receipt, id], (err, result) => {
+      //console.log("Result: "); console.log(result);
+      console.log("Error: ");
+      console.log(err);
+    });
+  }
 });
 
 // app.post('/api/insert', (req, res) => {

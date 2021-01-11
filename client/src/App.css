@@ -25,7 +25,7 @@
   font-size: 100px;
 }
 
-.appointmentManager#root--div {
+.appointmentManager {
   position: relative;
   top: 50%;
   left: 50%;
@@ -36,16 +36,39 @@
   white-space: nowrap;
 }
 
-.appointmentManager#paper {
-  max-width: none;
+.modal {
+  font-size: 12px;
 }
 
-.appointmentManager#container {
-  max-width: none;
+.modal > .header {
+  width: 100%;
+  border-bottom: 1px solid black;
+  font-size: 18px;
+  text-align: center;
+  padding: 5px;
 }
 
-.appointmentManager#pageSelect {
-  justify-self: end;
+.modal > .content {
+  width: 100%;
+  padding: 10px 5px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.content > .container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.modal > .actions {
+  width: 100%;
+  padding: 10px 5px;
+  margin: auto;
+  text-align: center;
 }
 
 .offer {

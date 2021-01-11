@@ -43,6 +43,22 @@ app.get("/api/getAppointments", (req, res) => {
   });
 });
 
+app.delete("/api/deleteAppointment/:idOrder", (req, res) => {
+  console.log("Running on 3001/api/update");
+
+  const id = req.params.idOrder;
+  console.log(id);
+
+  const sqlDelete = "DELETE FROM orders WHERE idorder = ?";
+
+  db.query(sqlDelete, id, (err, result) => {
+    console.log("Result: ");
+    console.log(result);
+    console.log("Error: ");
+    console.log(err);
+  });
+});
+
 // app.post('/api/insert', (req, res) => {
 //     console.log('Running on 3001/api/insert');
 //     const movieName = req.body.movieName; //varijabla iz App.js

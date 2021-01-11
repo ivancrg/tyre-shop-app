@@ -13,13 +13,14 @@ import { Button } from "@material-ui/core";
 
 const columns = [
   { id: "idorder", label: "ID", minWidth: 15 },
-  { id: "buyer_name", label: "Ime", minWidth: 10 },
-  { id: "buyer_surname", label: "Prezime", minWidth: 10 },
+  { id: "buyer_name", label: "Ime", minWidth: 75 },
+  { id: "buyer_surname", label: "Prezime", minWidth: 75 },
   { id: "offer_code", label: "Kod", minWidth: 15 },
   { id: "quantity", label: "Količina", minWidth: 25 },
-  { id: "e_mail", label: "E-mail", minWidth: 10 },
-  { id: "phone_no", label: "Mobitel", minWidth: 10 },
-  { id: "comments", label: "Komentar", minWidth: 10 },
+  { id: "e_mail", label: "E-mail", minWidth: 75 },
+  { id: "phone_no", label: "Mobitel", minWidth: 50 },
+  { id: "comments", label: "Komentar", minWidth: 75 },
+  { id: "service_date_time", label: "Termin", minWidth: 50 },
 ];
 
 function AppointmentManager() {
@@ -38,10 +39,29 @@ function AppointmentManager() {
   const [appointmentList, setAppointmentList] = useState([]);
 
   useEffect(() => {
-    Axios.get("http://localhost:3001/api/getAppointments").then((response) => {
-      setAppointmentList(response.data);
-    });
+    Axios.get("http://192.168.5.90:3001/api/getAppointments").then(
+      (response) => {
+        setAppointmentList(response.data);
+      }
+    );
   }, []);
+
+  function editAppointment(id) {
+    console.log(id);
+    console.log("edit");
+  }
+
+  function deleteAppointment(id) {
+    console.log(id);
+    console.log("delete");
+
+    Axios.delete(`http://localhost:3001/api/deleteAppointment/${id}`);
+  }
+
+  function confirmAppointment(id) {
+    console.log(id);
+    console.log("confirm");
+  }
 
   return (
     <div class="appointmentManager" id="root--div">
@@ -77,7 +97,8 @@ function AppointmentManager() {
                       key={row.code}
                     >
                       {columns.map((column) => {
-                        const value = row[column.id];
+                        const value = row[column.id] ? row[column.id] : "/";
+                        //if(value === null) value = "/";
                         return (
                           <TableCell
                             key={column.id + row["idorder"]}
@@ -94,7 +115,13 @@ function AppointmentManager() {
                         key={"edit_appointment" + row["idorder"]}
                         align="right"
                       >
-                        <Button linkon="0" buttonstyle="btn--primary">
+                        <Button
+                          linkon="0"
+                          onClick={() => {
+                            editAppointment(row["idorder"]);
+                          }}
+                          buttonstyle="btn--primary"
+                        >
                           Izmjeni
                         </Button>
                       </TableCell>
@@ -103,7 +130,13 @@ function AppointmentManager() {
                         key={"delete_appointment" + row["idorder"]}
                         align="right"
                       >
-                        <Button linkon="0" buttonstyle="btn--primary">
+                        <Button
+                          linkon="0"
+                          onClick={() => {
+                            deleteAppointment(row["idorder"]);
+                          }}
+                          buttonstyle="btn--primary"
+                        >
                           Obriši
                         </Button>
                       </TableCell>
@@ -112,7 +145,13 @@ function AppointmentManager() {
                         key={"confirm_appointment" + row["idorder"]}
                         align="right"
                       >
-                        <Button linkon="0" buttonstyle="btn--primary">
+                        <Button
+                          linkon="0"
+                          onClick={() => {
+                            confirmAppointment(row["idorder"]);
+                          }}
+                          buttonstyle="btn--primary"
+                        >
                           Potvrdi
                         </Button>
                       </TableCell>

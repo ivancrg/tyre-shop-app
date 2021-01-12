@@ -154,7 +154,11 @@ function AppointmentManager() {
                           maxHeight="auto"
                           modal
                           nested
-                          contentStyle={{ width: "275px" }}
+                          contentStyle={{
+                            width: "275px",
+                            border: "3px solid #242424",
+                            borderRadius: "5px",
+                          }}
                         >
                           {(close) => (
                             <div className="modal">

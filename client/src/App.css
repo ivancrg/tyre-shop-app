@@ -17,12 +17,46 @@
 }
 
 .appointment {
-  background-image: url("images/img-8.jpg");
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  color: #fff;
-  font-size: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  background-color: #ffffff;
+  color: #242424;
+  font-size: 28px;
+  height: auto;
+}
+
+.appointment > .form--container {
+  /* border: 1px solid #242424; */
+  padding-top: 25px;
+  padding-bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 75%;
+  max-width: 750px;
+}
+
+.appointment > .form--container > .title {
+  text-align: start;
+}
+
+.appointment > .form--container > .container--item {
+  margin-top: 10px;
+}
+
+.appointment > .form--container > .submit--button {
+  margin-top: 10px;
+  background-color: #242424;
+  color: #ffffff;
+  font-size: 20px;
+}
+
+.appointment > .form--container > .comment--textarea {
+  margin-top: 20px;
+  font-size: 17px;
 }
 
 .appointmentManager {

@@ -23,7 +23,7 @@ export default function Appointment() {
         <p className="title">Osobni podaci</p>
         <TextField
           error={errorName}
-          id="name"
+          id="first_name"
           variant="outlined"
           label="Ime"
           placeholder="Ivan"
@@ -35,7 +35,7 @@ export default function Appointment() {
         <TextField
           error={errorSurname}
           variant="outlined"
-          id="surname"
+          id="last_name"
           label="Prezime"
           placeholder="Horvat"
           required

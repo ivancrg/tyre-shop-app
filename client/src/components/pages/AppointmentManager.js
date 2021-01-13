@@ -265,7 +265,7 @@ function AppointmentManager() {
                       >
                         <Button
                           linkon="0"
-                          onClick={() => {
+                          onClick={() => { if (window.confirm("Sigurno želite obrisati?"))
                             deleteAppointment(row["idorder"]);
                           }}
                           buttonstyle="btn--primary"

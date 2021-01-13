@@ -8,6 +8,7 @@
 .home,
 .offer,
 .appointment,
+.notification,
 .log-in {
   display: flex;
   height: 90vh;
@@ -16,7 +17,7 @@
   font-size: 3rem;
 }
 
-.appointment {
+.appointment, .notification {
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -28,7 +29,7 @@
   height: auto;
 }
 
-.appointment > .form--container {
+.appointment > .form--container, .notification > .form--container {
   /* border: 1px solid #242424; */
   padding-top: 25px;
   padding-bottom: 25px;
@@ -39,15 +40,15 @@
   max-width: 750px;
 }
 
-.appointment > .form--container > .title {
+.appointment > .form--container > .title, .notification > .form--container > .title {
   text-align: start;
 }
 
-.appointment > .form--container > .container--item {
+.appointment > .form--container > .container--item, .notification > .form--container > .container--item {
   margin-top: 10px;
 }
 
-.appointment > .form--container > .submit--button {
+.appointment > .form--container > .submit--button, .notification > .form--container > .submit--button {
   margin-top: 10px;
   background-color: #242424;
   color: #ffffff;
@@ -56,10 +57,11 @@
 
 .appointment > .form--container > .comment--textarea {
   margin-top: 20px;
+  padding: 10px;
   font-size: 17px;
 }
 
-.appointmentManager {
+.appointmentManager, .notificationManager {
   position: relative;
   top: 50%;
   left: 50%;

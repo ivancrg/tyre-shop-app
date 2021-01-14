@@ -10,6 +10,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from '@material-ui/core/TableSortLabel';
+import FormControl from '@material-ui/core/FormControl';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { Button } from "@material-ui/core";
@@ -17,10 +18,12 @@ import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import { lighten, makeStyles } from "@material-ui/core/styles";
+import { lighten, makeStyles, withStyles } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import { parse, format, toDate } from "date-fns";
-
+import Select from "@material-ui/core/select";
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -30,17 +33,21 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 
 const columns = [
-  { id: "idorder", label: "ID", minWidth: 15, sortable: true },
-  { id: "buyer_name", label: "Ime", minWidth: 75, sortable: true },
-  { id: "buyer_surname", label: "Prezime", minWidth: 75, sortable: true },
-  { id: "offer_code", label: "Kod", minWidth: 15, sortable: true },
-  { id: "quantity", label: "Količina", minWidth: 25, sortable: true },
-  { id: "e_mail", label: "E-mail", minWidth: 75, sortable: false },
-  { id: "phone_no", label: "Mobitel", minWidth: 50, sortable: false },
-  { id: "comments", label: "Komentar", minWidth: 75, maxWidth: 400, sortable: false},
-  { id: "service_date_time", label: "Termin", minWidth: 50, sortable: true },
-  { id: "receipt_no", label: "Broj računa", minWidth: 50, sortable: true },
+  { id: "idorder", label: "ID", minWidth: 15},
+  { id: "buyer_name", label: "Ime", minWidth: 75},
+  { id: "buyer_surname", label: "Prezime", minWidth: 75},
+  { id: "offer_code", label: "Kod", minWidth: 15},
+  { id: "quantity", label: "Količina", minWidth: 25},
+  { id: "service_date_time", label: "Termin", minWidth: 50},
+  { id: "receipt_no", label: "Broj računa", minWidth: 50},
 ];
+
+const columnsUnsortable = [
+  { id: "notification_mode", label: "Način kontaktiranja", minWidth: 50},
+  { id: "e_mail", label: "E-mail", minWidth: 75 },
+  { id: "phone_no", label: "Mobitel", minWidth: 50 },
+  { id: "comments", label: "Komentar", minWidth: 75, maxWidth: 400},
+]
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -65,6 +72,20 @@ const useStyles = makeStyles((theme) => ({
     width: 1,
   },
 }));
+
+const StickyTableCell = withStyles((theme) => ({
+  head: {
+    position: "sticky",
+    left: 0,
+    zIndex: theme.zIndex.appBar + 2
+  },
+  body: {
+    position: "sticky",
+    left: 0,
+    backgroundColor: theme.palette.common.white,
+    zIndex: theme.zIndex.appBar + 1
+  },
+}))(TableCell);
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -98,25 +119,24 @@ function EnhancedTableHead(props) {
     onRequestSort(event, property);
   };
 
-  const sortHeaders = ["e-mail", "phone_no", "comments"]
-
   return (
     <TableHead>
       <TableRow>
+      <StickyTableCell className={classes.head}>Slanje obavijesti</StickyTableCell>
         {columns.map((column) => (
             <TableCell
               key={column.id}
               align={column.align}
               style={{minWidth: column.minWidth}}
-              sortDirection={orderBy === column.id && column.sortable ? order : false}
+              sortDirection={orderBy === column.id ? order : false}
             >
               <TableSortLabel
-                active={orderBy === column.id && column.sortable}
+                active={orderBy === column.id}
                 direction={orderBy === column.id ? order : 'asc'}
                 onClick={createSortHandler(column.id)}
               >
                 {column.label}
-                {(orderBy === column.id) && column.sortable ? (
+                {orderBy === column.id ? (
                   <span className={classes.visuallyHidden}>
                     {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                   </span>
@@ -124,6 +144,16 @@ function EnhancedTableHead(props) {
               </TableSortLabel>
             </TableCell>
         ))}
+        {columnsUnsortable.map((column) => (
+          <TableCell
+            key={column.id}
+            align={column.align}
+            style={{minWidth: column.minWidth}}
+          >
+            {column.label}
+          </TableCell>
+        ))}
+        
       </TableRow>
     </TableHead>
   );
@@ -139,74 +169,19 @@ EnhancedTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
-const useToolbarStyles = makeStyles((theme) => ({
-  root: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(1),
-  },
-  highlight:
-    theme.palette.type === 'light'
-      ? {
-          color: theme.palette.secondary.main,
-          backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-        }
-      : {
-          color: theme.palette.text.primary,
-          backgroundColor: theme.palette.secondary.dark,
-        },
-  title: {
-    flex: '1 1 100%',
-  },
-}));
-
-const EnhancedTableToolbar = (props) => {
-  const classes = useToolbarStyles();
-  const { numSelected } = props;
-
-  return (
-    <Toolbar
-      className={clsx(classes.root, {
-        [classes.highlight]: numSelected > 0,
-      })}
-    >
-      {
-        <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Obavijesti
-        </Typography>
-      }
-
-      {
-        <Tooltip title="Filtriraj listu">
-          <IconButton aria-label="filter list">
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      }
-    </Toolbar>
-  );
-};
-
-EnhancedTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-};
-
 function NotificationManager() {
-  //const [page, setPage] = useState(0);
-  //const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [notificationList, setNotificationList] = useState([]);
-  const [notificationDate, setNotificationDate] = useState(
+  const [notification, sendNotification] = useState(
     format(toDate(new Date()), "yyyy-MM-dd'T'HH:mm")
   );
+  const [notificationOption, setnotificationOption] = useState('');
+  const [errorOption, setErrorOption] = useState(false);
 
-  /*const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+  const handleNotificationChange = (event) => {
+    setnotificationOption(event.target.value);
   };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
-  */
 
   useEffect(() => {
     Axios.get("http://localhost:3001/api/getAppointments").then((response) => {
@@ -238,28 +213,15 @@ function NotificationManager() {
     refreshTableData();
   }
 
-  //const classes = useStyles();
-
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('idorder');
   const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
-  };
-
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = notificationList.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -273,8 +235,7 @@ function NotificationManager() {
 
   return (
     <div className="notificationManager">
-      <Paper>
-        <EnhancedTableToolbar numSelected={selected.length}/>
+      <Paper>        
         <TableContainer>
           <Table stickyHeader aria-label="sticky table">
             <EnhancedTableHead 
@@ -282,7 +243,6 @@ function NotificationManager() {
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={notificationList.length}
             />
@@ -297,6 +257,69 @@ function NotificationManager() {
                       tabIndex={-1}
                       key={row.code}
                     >
+                      <StickyTableCell className={classes.cell}>
+                        <Popup
+                          trigger={
+                            <Button linkon="0" buttonstyle="btn--primary">
+                              OBAVIJESTI
+                            </Button>
+                          }
+                          maxWidth="200px"
+                          maxHeight="auto"
+                          modal
+                          nested
+                          contentStyle={{
+                            width: "275px",
+                            border: "3px solid #242424",
+                            borderRadius: "5px",
+                          }}
+                        >
+                          {(close) => (
+                            <div className="modal">
+                              <div className="header">Slanje obavijesti</div>
+                              <div className="content">
+                                <form className="container" noValidate>
+                                  {!row["notification_mode"] ? (
+                                    <FormControl required className="notify--item">
+                                    <InputLabel
+                                      id={"notification"}
+                                      label="Odaberi način kontaktiranja..."
+                                    >Odaberi način kontaktiranja</InputLabel>
+                                    <Select
+                                      error={errorOption}
+                                      labelId="notification"
+                                      id="notification_method"
+                                      value={notificationOption}
+                                      onChange={handleNotificationChange}
+                                  >
+                                      <MenuItem value="e_mail">E-mail</MenuItem>
+                                      <MenuItem value="SMS">SMS poruka</MenuItem>
+                                      <MenuItem value="call">Telefonski poziv</MenuItem>
+                                    </Select>
+                                    </FormControl>
+                                  ) : (
+                                    <p>Osoba {row["buyer_name"]} {row["buyer_surname"]} će biti obaviještena. <br/>
+                                    Kontakt: {row["notification_mode"] === "e_mail" ? "E-mail " + row["e_mail"] : "Mobitel " + row["phone_no"]} {row["notifcation_mode"]}
+                                    </p>
+                                  )}
+                                </form>
+                              </div>
+
+                              <div className="actions">
+                                <Button
+                                  buttonstyle="btn--primary"
+                                  linkon="0"
+                                  /* onClick={() => {
+                                    sendNotification().value
+                                  }} */
+                                >
+                                  POTVRDI
+                                </Button>
+                              </div>
+                            </div>
+                          )}
+                        </Popup>
+                      </StickyTableCell>
                       {columns.map((column) => {
                         const value = row[column.id] ? row[column.id] : "/";
 
@@ -320,140 +343,30 @@ function NotificationManager() {
                         );
                       })}
 
-                      <TableCell
-                        key={"edit_notification" + row["idorder"]}
-                        align="center"
-                        
-                      >
-                        <Popup
-                          trigger={
-                            <Button linkon="0" buttonstyle="btn--primary">
-                              IZMJENI
-                            </Button>
-                          }
-                          maxWidth="200px"
-                          maxHeight="auto"
-                          modal
-                          nested
-                          contentStyle={{
-                            width: "275px",
-                            border: "3px solid #242424",
-                            borderRadius: "5px",
-                          }}
-                        >
-                          {(close) => (
-                            <div className="modal">
-                              <div className="header"> Odabir termina </div>
-                              <div className="content">
-                                <form className="container" noValidate>
-                                  <TextField
-                                    id={"datetime-local" + row["idorder"]}
-                                    label="Uredi termin..."
-                                    type="datetime-local"
-                                    required
-                                    defaultValue={format(
-                                      toDate(new Date()),
-                                      "yyyy-MM-dd'T'HH:mm"
-                                    ).toString()}
-                                    className={classes.textField}
-                                    InputLabelProps={{
-                                      shrink: true,
-                                    }}
-                                  />
-                                  {!row["receipt_no"] ? (
-                                    <TextField
-                                      id={"receipt-no-input" + row["idorder"]}
-                                      label="Upiši broj računa..."
-                                    />
-                                  ) : (
-                                    ""
-                                  )}
-                                </form>
-                              </div>
+                      {columnsUnsortable.map((column) => {
+                        const value = row[column.id] ? row[column.id] : "/";
 
-                              <div className="actions">
-                                <Button
-                                  buttonstyle="btn--primary"
-                                  linkon="0"
-                                  onClick={() => {
-                                    setNotificationDate(
-                                      document.getElementById(
-                                        "datetime-local" + row["idorder"]
-                                      ).value
-                                    );
+                        return (
+                          <TableCell
+                            key={column.id + row["idorder"]}
+                            align={column.align}
+                            style={{minWidth: column.minWidth, maxWidth: column.maxWidth, whiteSpace: 'nowrap', overflow: 'auto'}}
+                          >
+                            {value !=="/" && column.id === "notification_mode" ? () => {
+                            switch(value) { 
+                              case 1:
+                                return <div>SMS</div>;
+                              case 2: 
+                                return "Telefonski poziv";
+                              default:
+                                return <div>E-mail</div>;
+                            }
+                           } : value }
+                          </TableCell>
+                        );
+                      })}
 
-                                    let date = parse(
-                                      notificationDate
-                                        .toString()
-                                        .replace("T", " "),
-                                      "yyyy-MM-dd HH:mm",
-                                      new Date()
-                                    );
-
-                                    if (
-                                      date.toString() !== "Invalid Date" &&
-                                      date.toString() !== ""
-                                    ) {
-                                      if (!row["receipt_no"]) {
-                                        //nema racun, treba procitat je li unesen
-                                        var receipt = document
-                                          .getElementById(
-                                            "receipt-no-input" + row["idorder"]
-                                          )
-                                          .value.toString()
-                                          .replace(/\s/g, "");
-
-                                        if (receipt === "") {
-                                          alert("Nevaljan unos broja računa!");
-                                        } else {
-                                          editNotification(
-                                            row["idorder"],
-                                            notificationDate
-                                              .toString()
-                                              .replace("T", " "),
-                                            receipt
-                                          );
-
-                                          close();
-                                        }
-                                      } else {
-                                        editNotification(
-                                          row["idorder"],
-                                          notificationDate
-                                            .toString()
-                                            .replace("T", " "),
-                                          ""
-                                        );
-
-                                        close();
-                                      }
-                                    } else {
-                                      alert("Nevaljan unos termina!");
-                                    }
-                                  }}
-                                >
-                                  POTVRDI
-                                </Button>
-                              </div>
-                            </div>
-                          )}
-                        </Popup>
-                      </TableCell>
-
-                      <TableCell
-                        key={"delete_notification" + row["idorder"]}
-                        align="center"
-                      >
-                        <Button
-                          linkon="0"
-                          onClick={() => { if (window.confirm("Sigurno želite obrisati?"))
-                            deleteNotification(row["idorder"]);
-                          }}
-                          buttonstyle="btn--primary"
-                        >
-                          OBRIŠI
-                        </Button>
-                      </TableCell>
+                      
                     </TableRow>
                   );
                 })}

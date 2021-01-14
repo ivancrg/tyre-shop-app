@@ -100,6 +100,13 @@
   flex-direction: column;
 }
 
+.content > .container > .message {
+  width: 100%;
+  font-size: 14px;
+  text-align: left;
+  padding: 5px;
+}
+
 .modal > .actions {
   width: 100%;
   padding: 10px 5px;

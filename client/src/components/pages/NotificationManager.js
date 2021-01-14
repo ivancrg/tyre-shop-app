@@ -278,9 +278,12 @@ function NotificationManager() {
                             <div className="modal">
                               <div className="header">Slanje obavijesti</div>
                               <div className="content">
+                                <form className="container">
+                                <div className="message">Osoba {row["buyer_name"]} {row["buyer_surname"]} će biti obaviještena. <br/></div>
+                                </form>
                                 <form className="container" noValidate>
                                   {!row["notification_mode"] ? (
-                                    <FormControl required className="notify--item">
+                                    <FormControl required className={classes.popUp}>
                                     <InputLabel
                                       id={"notification"}
                                       label="Odaberi način kontaktiranja..."
@@ -292,15 +295,15 @@ function NotificationManager() {
                                       value={notificationOption}
                                       onChange={handleNotificationChange}
                                   >
-                                      <MenuItem value="e_mail">E-mail</MenuItem>
-                                      <MenuItem value="SMS">SMS poruka</MenuItem>
-                                      <MenuItem value="call">Telefonski poziv</MenuItem>
+                                      <MenuItem value="1">E-mail</MenuItem>
+                                      <MenuItem value="2">SMS poruka</MenuItem>
+                                      <MenuItem value="3">Telefonski poziv</MenuItem>
                                     </Select>
                                     </FormControl>
-                                  ) : (
-                                    <p>Osoba {row["buyer_name"]} {row["buyer_surname"]} će biti obaviještena. <br/>
-                                    Kontakt: {row["notification_mode"] === "e_mail" ? "E-mail " + row["e_mail"] : "Mobitel " + row["phone_no"]} {row["notifcation_mode"]}
-                                    </p>
+                                   ) : (
+                                    <div className="message">
+                                    Kontakt: {row["notification_mode"] === 3 ? "Poziv " + row["phone_no"] : (row["notification_mode"] === 2 ? "SMS " + row["phone_no"] : "E-mail " + row["e_mail"])}
+                                    </div>
                                   )}
                                 </form>
                               </div>
@@ -352,16 +355,11 @@ function NotificationManager() {
                             align={column.align}
                             style={{minWidth: column.minWidth, maxWidth: column.maxWidth, whiteSpace: 'nowrap', overflow: 'auto'}}
                           >
-                            {value !=="/" && column.id === "notification_mode" ? () => {
-                            switch(value) { 
-                              case 1:
-                                return <div>SMS</div>;
-                              case 2: 
-                                return "Telefonski poziv";
-                              default:
-                                return <div>E-mail</div>;
-                            }
-                           } : value }
+                            {value !=="/" && column.id === "notification_mode" ? {
+                              '1': "E-mail",
+                              '2': "SMS",
+                              '3': "Telefonski poziv"
+                           }[value] : value }
                           </TableCell>
                         );
                       })}

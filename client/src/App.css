@@ -10,6 +10,7 @@
 .appointment,
 .notification,
 .help,
+.contact,
 .log-in {
   display: flex;
   height: 90vh;
@@ -18,7 +19,7 @@
   font-size: 3rem;
 }
 
-.appointment, .notification, .help {
+.appointment, .notification, .help, .contact {
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -45,29 +46,47 @@
   text-align: start;
 }
 
-.help > .form--container > .title {
+.help > .form--container > .title, .contact > .form--container > .title{
   text-align: center;
 }
 
-.help > .form--container > .text {
+.help > .form--container > .text, .contact > .form--container > .text{
   width: 100%;
   font-size: 24px;
   text-align: left;
   padding: 5px;
 }
 
-.appointment > .form--container > .container--item, .notification > .form--container > .container--item {
+.form--container > .container--item {
   margin-top: 10px;
 }
 
-.appointment > .form--container > .submit--button, .notification > .form--container > .submit--button {
+.form--container > .submit--button {
   margin-top: 10px;
   background-color: #242424;
   color: #ffffff;
   font-size: 20px;
 }
 
-.appointment > .form--container > .comment--textarea {
+.contact > .form--container > table {
+  padding: 10px;
+  font-size: 20px;
+  max-width: 750px;
+  text-align: left;
+  table-layout: fixed;
+  white-space: nowrap;
+}
+
+.contact > .form--container > table td {
+  width: 50%;
+}
+
+.contact > .form--container > table th {
+  width: 50%;
+  padding-left: 10%;
+}
+
+.appointment > .form--container > .comment--textarea, .contact > .form--container > .comment--textarea {
   margin-top: 20px;
   padding: 10px;
   font-size: 17px;

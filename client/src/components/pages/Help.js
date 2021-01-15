@@ -38,6 +38,9 @@ export default function Help() {
                     ))}
                 </div>
             </div>
+            <div className="form--container">
+                <p className="text">Ukoliko nismo odgovorili na vaše pitanje, možete nas <a href="/contact">kontaktirati</a>.</p>
+            </div>
         </form>
     )
 }

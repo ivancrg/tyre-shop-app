@@ -9,6 +9,7 @@
 .offer,
 .appointment,
 .notification,
+.help,
 .log-in {
   display: flex;
   height: 90vh;
@@ -17,7 +18,7 @@
   font-size: 3rem;
 }
 
-.appointment, .notification {
+.appointment, .notification, .help {
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -29,7 +30,7 @@
   height: auto;
 }
 
-.appointment > .form--container, .notification > .form--container {
+.form--container {
   /* border: 1px solid #242424; */
   padding-top: 25px;
   padding-bottom: 25px;
@@ -42,6 +43,17 @@
 
 .appointment > .form--container > .title, .notification > .form--container > .title {
   text-align: start;
+}
+
+.help > .form--container > .title {
+  text-align: center;
+}
+
+.help > .form--container > .text {
+  width: 100%;
+  font-size: 24px;
+  text-align: left;
+  padding: 5px;
 }
 
 .appointment > .form--container > .container--item, .notification > .form--container > .container--item {

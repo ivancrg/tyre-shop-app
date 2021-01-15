@@ -43,6 +43,30 @@ app.get("/api/getAppointments", (req, res) => {
   });
 });
 
+app.get("/api/getQuestions", (req, res) => {
+  console.log("Running on 3001/api/getQuestions");
+
+  const sqlSelect = "SELECT * FROM questions";
+
+  db.query(sqlSelect, (err, result) => {
+    res.send(result);
+    console.log("Error: " + err);
+  })
+})
+
+app.put("/api/setQuestionsOpen", (req, res) => {
+  console.log("Runnin on 3001/api/setQuestionsOpen");
+
+  const id = req.body.id;
+  const open = req.body.open;
+
+  const sqlUpdate = "UPDATE questions SET open = ? WHERE id = ?";
+  
+  db.query(sqlUpdate, [open, id], (err, result) => {
+    console.log("Error: " + err);
+  })
+})
+
 app.delete("/api/deleteAppointment/:idOrder", (req, res) => {
   console.log("Running on 3001/api/deleteAppointment");
 

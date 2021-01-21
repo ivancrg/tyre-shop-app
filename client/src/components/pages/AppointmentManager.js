@@ -41,9 +41,11 @@ function AppointmentManager() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [appointmentList, setAppointmentList] = useState([]);
-  const [appointmentDate, setAppointmentDate] = useState(
-    format(toDate(new Date()), "yyyy-MM-dd'T'HH:mm")
-  );
+
+  var appointmentDate = format(toDate(new Date()), "yyyy-MM-dd'T'HH:mm");
+  function setAppointmentDate(date) {
+    appointmentDate = date;
+  }
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

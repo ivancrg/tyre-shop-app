@@ -109,18 +109,39 @@ app.put("/api/editAppointment", (req, res) => {
   }
 });
 
-// app.post('/api/insert', (req, res) => {
-//     console.log('Running on 3001/api/insert');
-//     const movieName = req.body.movieName; //varijabla iz App.js
-//     const movieReview = req.body.movieReview; //varijabla iz App.js
+app.post("/api/insertAppointment", (req, res) => {
+  console.log("Running on 3001/api/insert");
+  const buyer_name = req.body.buyer_name;
+  const buyer_surname = req.body.buyer_surname;
+  const offer_code = req.body.offer_code;
+  const quantity = req.body.quantity;
+  const e_mail = req.body.e_mail;
+  const phone_no = req.body.phone_no;
+  const comments = req.body.comments;
+  const tyre_dimension = req.body.tyre_dimension;
 
-//     const sqlInsert = "INSERT INTO movie_reviews (movieName, movieReview) VALUES (?, ?)";
+  const sqlInsert =
+    "INSERT INTO orders (buyer_name, buyer_surname, offer_code, quantity, e_mail, phone_no, comments, tyre_dimension) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-//     db.query(sqlInsert, /*polje zamijenit ? u sqlInsert*/ [movieName, movieReview], (err, result) => {
-//         console.log('Result: '); console.log(result);
-//         console.log('Error: '); console.log(err);
-//     });
-// });
+  db.query(
+    sqlInsert,
+    /*polje zamijenit ? u sqlInsert*/ [
+      buyer_name,
+      buyer_surname,
+      offer_code,
+      quantity,
+      e_mail,
+      phone_no,
+      comments,
+      tyre_dimension,
+    ],
+    (err, result) => {
+      //console.log('Result: '); console.log(result);
+      console.log("Error: ");
+      console.log(err);
+    }
+  );
+});
 
 // app.delete('/api/delete/:movieID', (req, res) => {
 //     console.log('Running on 3001/api/delete');

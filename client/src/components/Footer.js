@@ -8,11 +8,11 @@ function Footer() {
     <div className="footer-container">
       <section className="footer-subscription">
         <p className="footer-subscription-heading">
-          Footer.js Line 8 to customize text
+          Footer.js Line 11 to customize text
         </p>
 
         <p className="footer-subscription-text">
-          Footer.js Line 12 to customize text
+          Footer.js Line 15 to customize text
         </p>
 
         <div className="input-areas">
@@ -24,7 +24,7 @@ function Footer() {
               className="footer-input"
             />
             <Button linkon="1" linkpath="/subscribe" buttonstyle="btn--outline">
-              Subscribe (Footer.js L18)
+              Subscribe (Footer.js L27)
             </Button>
           </form>
         </div>

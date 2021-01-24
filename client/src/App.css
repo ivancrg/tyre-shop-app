@@ -19,7 +19,10 @@
   font-size: 3rem;
 }
 
-.appointment, .notification, .help, .contact {
+.appointment,
+.notification,
+.help,
+.contact {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -42,15 +45,18 @@
   max-width: 750px;
 }
 
-.appointment > .form--container > .title, .notification > .form--container > .title {
+.appointment > .form--container > .title,
+.notification > .form--container > .title {
   text-align: start;
 }
 
-.help > .form--container > .title, .contact > .form--container > .title{
+.help > .form--container > .title,
+.contact > .form--container > .title {
   text-align: center;
 }
 
-.help > .form--container > .text, .contact > .form--container > .text{
+.help > .form--container > .text,
+.contact > .form--container > .text {
   width: 100%;
   font-size: 24px;
   text-align: left;
@@ -102,7 +108,8 @@
   padding-left: 10%;
 }
 
-.appointment > .form--container > .comment--textarea, .contact > .form--container > .comment--textarea {
+.appointment > .form--container > .comment--textarea,
+.contact > .form--container > .comment--textarea {
   margin-top: 20px;
   padding: 10px;
   /*font-size: 17px;*/
@@ -111,7 +118,8 @@
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
-.appointmentManager, .notificationManager {
+.appointmentManager,
+.notificationManager {
   position: relative;
   top: 50%;
   left: 50%;
@@ -148,13 +156,13 @@
   flex-wrap: wrap;
   justify-content: center;
   flex-direction: column;
+  padding-bottom: 10px;
 }
 
 .content > .container > .message {
   width: 100%;
-  font-size: 14px;
+  font-size: 16px;
   text-align: left;
-  padding: 5px;
 }
 
 .modal > .actions {
@@ -162,6 +170,15 @@
   padding: 10px 5px;
   margin: auto;
   text-align: center;
+}
+
+.container > .notification--select {
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.container > .button {
+  margin-top: 20px;
 }
 
 .offer {
@@ -180,4 +197,30 @@
   background-repeat: no-repeat;
   color: #fff;
   font-size: 100px;
+}
+
+.contact--info {
+  padding-bottom: 35px;
+}
+
+.contact--info--row {
+  display: flex;
+  justify-content: center;
+  /* border: 1px solid greenyellow; */
+  font-size: 1.25rem;
+}
+
+.contact--info--column {
+  width: 25%;
+  /* border: 1px solid salmon; */
+  font-size: 2rem;
+}
+
+.contact--info--column--title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 25%;
+  /* border: 1px solid salmon; */
+  font-size: 2rem;
 }

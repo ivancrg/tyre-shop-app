@@ -3,6 +3,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const mysql = require("mysql");
+const nodemailer = require("nodemailer");
 
 const db = mysql.createPool({
   host: "localhost",
@@ -11,9 +12,81 @@ const db = mysql.createPool({
   database: "tyre-shop-app",
 });
 
+// //Middleware
+// app.use(express.static('public'));
+
 app.use(cors());
 app.use(express.json()); //grabbing info from frontend as json
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+app.post("/api/sendMail", (req, res) => {
+  console.log(req.body.email);
+  console.log(req.body.subject);
+  console.log(req.body.message);
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "test.rwa.riteh@gmail.com",
+      pass: "ritehRWA?",
+    },
+  });
+
+  const mailOptions = {
+    from: req.body.email,
+    to: "test.rwa.riteh@gmail.com",
+    subject:
+      "Poruka od osobe " +
+      req.body.first_name +
+      " " +
+      req.body.last_name +
+      ", e-mail: " +
+      req.body.email,
+    text:
+      "Predmet: " +
+      req.body.subject +
+      "\n##########################\n\n" +
+      req.body.message,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error);
+      res.send("error");
+    } else {
+      console.log("E-mail sent: " + info.response);
+      res.send("success");
+    }
+  });
+});
+
+app.post("/api/sendNotification", (req, res) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "test.rwa.riteh@gmail.com",
+      pass: "ritehRWA?",
+    },
+  });
+
+  const mailOptions = {
+    from: "test.rwa.riteh@gmail.com",
+    to: req.body.email,
+    subject: req.body.subject,
+    text: req.body.message,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error);
+      res.send("error");
+    } else {
+      console.log("E-mail sent: " + info.response);
+      res.send("success");
+    }
+  });
+});
 
 app.get("/api/getOffers", (req, res) => {
   console.log("Running on 3001/api/getOffers");
@@ -51,8 +124,8 @@ app.get("/api/getQuestions", (req, res) => {
   db.query(sqlSelect, (err, result) => {
     res.send(result);
     console.log("Error: " + err);
-  })
-})
+  });
+});
 
 app.put("/api/setQuestionsOpen", (req, res) => {
   console.log("Runnin on 3001/api/setQuestionsOpen");
@@ -61,11 +134,11 @@ app.put("/api/setQuestionsOpen", (req, res) => {
   const open = req.body.open;
 
   const sqlUpdate = "UPDATE questions SET open = ? WHERE id = ?";
-  
+
   db.query(sqlUpdate, [open, id], (err, result) => {
     console.log("Error: " + err);
-  })
-})
+  });
+});
 
 app.delete("/api/deleteAppointment/:idOrder", (req, res) => {
   console.log("Running on 3001/api/deleteAppointment");

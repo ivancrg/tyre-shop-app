@@ -34,9 +34,9 @@ export default function App() {
     });
   };
 
-  React.useEffect(() => {
-    console.log(errors);
-  }, [errors]);
+  // React.useEffect(() => {
+  //   console.log(errors);
+  // }, [errors]);
 
   return (
     <form className="appointment" onSubmit={handleSubmit(onSubmit)}>

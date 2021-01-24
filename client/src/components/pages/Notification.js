@@ -14,12 +14,24 @@ export default function Notification() {
   const { /*register,*/ handleSubmit, /*watch,*/ errors, control } = useForm();
 
   const onSubmit = (data) => {
-    console.log(data);
+    //console.log(data);
+
+    Axios.put("http://localhost:3001/api/updateNotification", {
+      receipt: data["receipt_number"],
+      notification_mode: data["notification_mode"],
+      notification_interval: data["notification_interval"],
+    }).then((response) => {
+      if (response === "error") {
+        alert("Došlo je do greške.");
+      } else {
+        alert("Uspješno zapisan način obavještavanja.");
+      }
+    });
   };
 
-  React.useEffect(() => {
+  /*React.useEffect(() => {
     console.log(errors);
-  }, [errors]);
+  }, [errors]);*/
 
   return (
     <form className="notification" onSubmit={handleSubmit(onSubmit)}>
@@ -75,9 +87,9 @@ export default function Notification() {
                 inputRef={ref}
                 error={!!errors.notification_mode}
               >
-                <MenuItem value="e-mail">E-mail</MenuItem>
-                <MenuItem value="SMS">SMS poruka</MenuItem>
-                <MenuItem value="call">Telefonski poziv</MenuItem>
+                <MenuItem value="1">E-mail</MenuItem>
+                <MenuItem value="2">SMS poruka</MenuItem>
+                <MenuItem value="3">Telefonski poziv</MenuItem>
               </Select>
             </FormControl>
           )}
@@ -99,22 +111,22 @@ export default function Notification() {
                 inputref={ref}
               >
                 <FormControlLabel
-                  value="10_min"
+                  value="10 minuta prije"
                   control={<Radio />}
                   label="10 minuta prije"
                 />
                 <FormControlLabel
-                  value="30_min"
+                  value="30 minuta prije"
                   control={<Radio />}
                   label="30 minuta prije"
                 />
                 <FormControlLabel
-                  value="every_10_min"
+                  value="Svakih 30 minuta"
                   control={<Radio />}
                   label="Svakih 30 minuta"
                 />
                 <FormControlLabel
-                  value="every_hour"
+                  value="Svakih sat vremena"
                   control={<Radio />}
                   label="Svakih sat vremena"
                 />

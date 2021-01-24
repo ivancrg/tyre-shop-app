@@ -34,9 +34,15 @@ const columns = [
 
 const columnsUnsortable = [
   { id: "notification_mode", label: "Način kontaktiranja", minWidth: 50 },
+  {
+    id: "notification_interval",
+    label: "Interval kontaktiranja",
+    minWidth: 50,
+  },
   { id: "e_mail", label: "E-mail", minWidth: 75 },
   { id: "phone_no", label: "Mobitel", minWidth: 50 },
   { id: "comments", label: "Komentar", minWidth: 75, maxWidth: 400 },
+  { id: "tyre_dimension", label: "Dimenzija guma", minWidth: 50 },
 ];
 
 const useStyles = makeStyles((theme) => ({

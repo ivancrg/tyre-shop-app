@@ -27,6 +27,7 @@ const columns = [
   { id: "comments", label: "Komentar", minWidth: 75 },
   { id: "service_date_time", label: "Termin", minWidth: 50 },
   { id: "receipt_no", label: "Broj računa", minWidth: 50 },
+  { id: "tyre_dimension", label: "Dimenzija guma", minWidth: 50 },
 ];
 
 const useStyles = makeStyles((theme) => ({
@@ -267,8 +268,9 @@ function AppointmentManager() {
                       >
                         <Button
                           linkon="0"
-                          onClick={() => { if (window.confirm("Sigurno želite obrisati?"))
-                            deleteAppointment(row["idorder"]);
+                          onClick={() => {
+                            if (window.confirm("Sigurno želite obrisati?"))
+                              deleteAppointment(row["idorder"]);
                           }}
                           buttonstyle="btn--primary"
                         >

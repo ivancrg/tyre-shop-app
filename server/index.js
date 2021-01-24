@@ -12,9 +12,6 @@ const db = mysql.createPool({
   database: "tyre-shop-app",
 });
 
-// //Middleware
-// app.use(express.static('public'));
-
 app.use(cors());
 app.use(express.json()); //grabbing info from frontend as json
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -88,6 +85,34 @@ app.post("/api/sendNotification", (req, res) => {
   });
 });
 
+app.put("/api/updateNotification", (req, res) => {
+  console.log("Running on 3001/api/updateNotification");
+
+  const receipt = req.body.receipt;
+  const notification_mode = req.body.notification_mode;
+  const notification_interval = req.body.notification_interval;
+
+  const sqlUpdate =
+    "UPDATE orders SET notification_mode = ?, notification_interval = ? WHERE receipt_no = ?";
+
+  db.query(
+    sqlUpdate,
+    [notification_mode, notification_interval, receipt],
+    (error, result) => {
+      // console.log("Result: ");
+      // console.log(result);
+      // console.log("Error: ");
+      // console.log(err);
+      if (error) {
+        console.log(error);
+        res.send("error");
+      } else {
+        res.send("success");
+      }
+    }
+  );
+});
+
 app.get("/api/getOffers", (req, res) => {
   console.log("Running on 3001/api/getOffers");
 
@@ -128,7 +153,7 @@ app.get("/api/getQuestions", (req, res) => {
 });
 
 app.put("/api/setQuestionsOpen", (req, res) => {
-  console.log("Runnin on 3001/api/setQuestionsOpen");
+  console.log("Running on 3001/api/setQuestionsOpen");
 
   const id = req.body.id;
   const open = req.body.open;

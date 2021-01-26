@@ -21,7 +21,7 @@ function App() {
         <Navbar></Navbar>
 
         <Switch>
-          <Route path="/appointment" exact component={Appointment} />
+          <Route path="/appointment/:id?" exact component={Appointment} />
           <Route
             path="/appointmentManager"
             exact

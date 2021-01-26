@@ -15,6 +15,26 @@ import "reactjs-popup/dist/index.css";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import { parse, format, toDate } from "date-fns";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: "100%",
+    "& > * + *": {
+      marginTop: theme.spacing(2),
+    },
+  },
+  textField: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: 225,
+  },
+}));
 
 const columns = [
   { id: "idorder", label: "ID", minWidth: 15 },
@@ -29,14 +49,6 @@ const columns = [
   { id: "receipt_no", label: "Broj računa", minWidth: 50 },
   { id: "tyre_dimension", label: "Dimenzija guma", minWidth: 50 },
 ];
-
-const useStyles = makeStyles((theme) => ({
-  textField: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: 225,
-  },
-}));
 
 function AppointmentManager() {
   const [page, setPage] = useState(0);
@@ -91,6 +103,8 @@ function AppointmentManager() {
 
     refreshTableData();
     refreshTableData();
+
+    setOpenSuccess(true);
   }
 
   function deleteAppointment(id) {
@@ -98,9 +112,27 @@ function AppointmentManager() {
 
     refreshTableData();
     refreshTableData();
+
+    setOpenSuccess(true);
   }
 
   const classes = useStyles();
+  const [openSuccess, setOpenSuccess] = React.useState(false);
+  const [openError, setOpenError] = React.useState(false);
+
+  const handleCloseSuccess = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSuccess(false);
+  };
+
+  const handleCloseError = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenError(false);
+  };
 
   if (!loginStatus) {
     return (
@@ -119,211 +151,239 @@ function AppointmentManager() {
   }
 
   return (
-    <div className="appointmentManager">
-      <Paper>
-        <TableContainer>
-          <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow>
-                {columns.map((column) => (
-                  <TableCell
-                    key={column.id}
-                    align={column.align}
-                    style={{ minWidth: column.minWidth }}
-                  >
-                    {column.label}
-                  </TableCell>
-                ))}
-
-                <TableCell key="title_edit">Izmjena termina</TableCell>
-                <TableCell key="title_delete">Brisanje termina</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {appointmentList
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
-                  return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={row.code}
+    <>
+      <div className="appointmentManager">
+        <Paper>
+          <TableContainer>
+            <Table stickyHeader aria-label="sticky table">
+              <TableHead>
+                <TableRow>
+                  {columns.map((column) => (
+                    <TableCell
+                      key={column.id}
+                      align={column.align}
+                      style={{ minWidth: column.minWidth }}
                     >
-                      {columns.map((column) => {
-                        const value = row[column.id] ? row[column.id] : "/";
+                      {column.label}
+                    </TableCell>
+                  ))}
 
-                        return (
-                          <TableCell
-                            key={column.id + row["idorder"]}
-                            align={column.align}
-                          >
-                            {value !== "/" && column.id === "service_date_time"
-                              ? format(
-                                  parse(
-                                    value.toString(),
-                                    "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
-                                    new Date()
-                                  ),
-                                  "yyyy-MM-dd' u 'HH:mm"
-                                )
-                              : value}
-                          </TableCell>
-                        );
-                      })}
-
-                      <TableCell
-                        key={"edit_appointment" + row["idorder"]}
-                        align="center"
+                  <TableCell key="title_edit">Izmjena termina</TableCell>
+                  <TableCell key="title_delete">Brisanje termina</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {appointmentList
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => {
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={row.code}
                       >
-                        <Popup
-                          trigger={
-                            <Button linkon="0" buttonstyle="btn--primary">
-                              IZMJENI
-                            </Button>
-                          }
-                          maxWidth="200px"
-                          maxHeight="auto"
-                          modal
-                          nested
-                          contentStyle={{
-                            width: "275px",
-                            border: "3px solid #242424",
-                            borderRadius: "5px",
-                          }}
-                        >
-                          {(close) => (
-                            <div className="modal">
-                              <div className="header"> Odabir termina </div>
-                              <div className="content">
-                                <form className="container" noValidate>
-                                  <TextField
-                                    id={"datetime-local" + row["idorder"]}
-                                    label="Uredi termin..."
-                                    type="datetime-local"
-                                    required
-                                    defaultValue={format(
-                                      toDate(new Date()),
-                                      "yyyy-MM-dd'T'HH:mm"
-                                    ).toString()}
-                                    className={classes.textField}
-                                    InputLabelProps={{
-                                      shrink: true,
-                                    }}
-                                  />
-                                  {!row["receipt_no"] ? (
-                                    <TextField
-                                      id={"receipt-no-input" + row["idorder"]}
-                                      label="Upiši broj računa..."
-                                    />
-                                  ) : (
-                                    ""
-                                  )}
-                                </form>
-                              </div>
+                        {columns.map((column) => {
+                          const value = row[column.id] ? row[column.id] : "/";
 
-                              <div className="actions">
-                                <Button
-                                  buttonstyle="btn--primary"
-                                  linkon="0"
-                                  onClick={() => {
-                                    setAppointmentDate(
-                                      document.getElementById(
-                                        "datetime-local" + row["idorder"]
-                                      ).value
-                                    );
-
-                                    let date = parse(
-                                      appointmentDate
-                                        .toString()
-                                        .replace("T", " "),
-                                      "yyyy-MM-dd HH:mm",
+                          return (
+                            <TableCell
+                              key={column.id + row["idorder"]}
+                              align={column.align}
+                            >
+                              {value !== "/" &&
+                              column.id === "service_date_time"
+                                ? format(
+                                    parse(
+                                      value.toString(),
+                                      "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
                                       new Date()
-                                    );
+                                    ),
+                                    "yyyy-MM-dd' u 'HH:mm"
+                                  )
+                                : value}
+                            </TableCell>
+                          );
+                        })}
 
-                                    if (
-                                      date.toString() !== "Invalid Date" &&
-                                      date.toString() !== ""
-                                    ) {
-                                      if (!row["receipt_no"]) {
-                                        //nema racun, treba procitat je li unesen
-                                        var receipt = document
-                                          .getElementById(
-                                            "receipt-no-input" + row["idorder"]
-                                          )
-                                          .value.toString()
-                                          .replace(/\s/g, "");
+                        <TableCell
+                          key={"edit_appointment" + row["idorder"]}
+                          align="center"
+                        >
+                          <Popup
+                            trigger={
+                              <Button linkon="0" buttonstyle="btn--primary">
+                                IZMJENI
+                              </Button>
+                            }
+                            maxWidth="200px"
+                            maxHeight="auto"
+                            modal
+                            nested
+                            contentStyle={{
+                              width: "275px",
+                              border: "3px solid #242424",
+                              borderRadius: "5px",
+                            }}
+                          >
+                            {(close) => (
+                              <div className="modal">
+                                <div className="header"> Odabir termina </div>
+                                <div className="content">
+                                  <form className="container" noValidate>
+                                    <TextField
+                                      id={"datetime-local" + row["idorder"]}
+                                      label="Uredi termin..."
+                                      type="datetime-local"
+                                      required
+                                      defaultValue={format(
+                                        toDate(new Date()),
+                                        "yyyy-MM-dd'T'HH:mm"
+                                      ).toString()}
+                                      className={classes.textField}
+                                      InputLabelProps={{
+                                        shrink: true,
+                                      }}
+                                    />
+                                    {!row["receipt_no"] ? (
+                                      <TextField
+                                        id={"receipt-no-input" + row["idorder"]}
+                                        label="Upiši broj računa..."
+                                      />
+                                    ) : (
+                                      ""
+                                    )}
+                                  </form>
+                                </div>
 
-                                        if (receipt === "") {
-                                          alert("Nevaljan unos broja računa!");
+                                <div className="actions">
+                                  <Button
+                                    buttonstyle="btn--primary"
+                                    linkon="0"
+                                    onClick={() => {
+                                      setAppointmentDate(
+                                        document.getElementById(
+                                          "datetime-local" + row["idorder"]
+                                        ).value
+                                      );
+
+                                      let date = parse(
+                                        appointmentDate
+                                          .toString()
+                                          .replace("T", " "),
+                                        "yyyy-MM-dd HH:mm",
+                                        new Date()
+                                      );
+
+                                      if (
+                                        date.toString() !== "Invalid Date" &&
+                                        date.toString() !== ""
+                                      ) {
+                                        if (!row["receipt_no"]) {
+                                          //nema racun, treba procitat je li unesen
+                                          var receipt = document
+                                            .getElementById(
+                                              "receipt-no-input" +
+                                                row["idorder"]
+                                            )
+                                            .value.toString()
+                                            .replace(/\s/g, "");
+
+                                          if (receipt === "") {
+                                            setOpenError(true);
+                                            //alert("Nevaljan unos broja računa!");
+                                          } else {
+                                            editAppointment(
+                                              row["idorder"],
+                                              appointmentDate
+                                                .toString()
+                                                .replace("T", " "),
+                                              receipt
+                                            );
+
+                                            close();
+                                          }
                                         } else {
                                           editAppointment(
                                             row["idorder"],
                                             appointmentDate
                                               .toString()
                                               .replace("T", " "),
-                                            receipt
+                                            ""
                                           );
 
                                           close();
                                         }
                                       } else {
-                                        editAppointment(
-                                          row["idorder"],
-                                          appointmentDate
-                                            .toString()
-                                            .replace("T", " "),
-                                          ""
-                                        );
-
-                                        close();
+                                        setOpenError(true);
+                                        //alert("Nevaljan unos termina!");
                                       }
-                                    } else {
-                                      alert("Nevaljan unos termina!");
-                                    }
-                                  }}
-                                >
-                                  POTVRDI
-                                </Button>
+                                    }}
+                                  >
+                                    POTVRDI
+                                  </Button>
+                                </div>
                               </div>
-                            </div>
-                          )}
-                        </Popup>
-                      </TableCell>
+                            )}
+                          </Popup>
+                        </TableCell>
 
-                      <TableCell
-                        key={"delete_appointment" + row["idorder"]}
-                        align="center"
-                      >
-                        <Button
-                          linkon="0"
-                          onClick={() => {
-                            if (window.confirm("Sigurno želite obrisati?"))
-                              deleteAppointment(row["idorder"]);
-                          }}
-                          buttonstyle="btn--primary"
+                        <TableCell
+                          key={"delete_appointment" + row["idorder"]}
+                          align="center"
                         >
-                          OBRIŠI
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                          <Button
+                            linkon="0"
+                            onClick={() => {
+                              if (window.confirm("Sigurno želite obrisati?"))
+                                deleteAppointment(row["idorder"]);
+                            }}
+                            buttonstyle="btn--primary"
+                          >
+                            OBRIŠI
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
-          component="div"
-          count={appointmentList.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
-      </Paper>
-    </div>
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 100]}
+            component="div"
+            count={appointmentList.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onChangePage={handleChangePage}
+            onChangeRowsPerPage={handleChangeRowsPerPage}
+          />
+        </Paper>
+      </div>
+
+      <div className={classes.root}>
+        <Snackbar
+          open={openSuccess}
+          autoHideDuration={3750}
+          onClose={handleCloseSuccess}
+        >
+          <Alert onClose={handleCloseSuccess} severity="success">
+            Uspješno izvršeno.
+          </Alert>
+        </Snackbar>
+
+        <Snackbar
+          open={openError}
+          autoHideDuration={3750}
+          onClose={handleCloseError}
+        >
+          <Alert onClose={handleCloseError} severity="error">
+            Došlo je do greške. Provjerite podatke.
+          </Alert>
+        </Snackbar>
+      </div>
+    </>
   );
 }
 

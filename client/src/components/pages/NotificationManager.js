@@ -21,6 +21,12 @@ import Select from "@material-ui/core/select";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import { useForm, Controller } from "react-hook-form";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const columns = [
   { id: "idorder", label: "ID", minWidth: 15 },
@@ -66,6 +72,12 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     top: 20,
     width: 1,
+  },
+  rootalert: {
+    width: "100%",
+    "& > * + *": {
+      marginTop: theme.spacing(2),
+    },
   },
 }));
 
@@ -178,6 +190,22 @@ function NotificationManager() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [notificationList, setNotificationList] = useState([]);
+  const [openSuccess, setOpenSuccess] = useState(false);
+  const [openError, setOpenError] = useState(false);
+
+  const handleCloseSuccess = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSuccess(false);
+  };
+
+  const handleCloseError = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenError(false);
+  };
 
   const [loginStatus, setLoginStatus] = useState(false);
 
@@ -205,7 +233,8 @@ function NotificationManager() {
     );
 
     if (mode !== "1") {
-      alert("Došlo je do greške.");
+      setOpenError(true);
+      //alert("Došlo je do greške.");
       return;
     }
 
@@ -225,9 +254,11 @@ function NotificationManager() {
     Axios.post("http://localhost:3001/api/sendNotification", mailData).then(
       (response) => {
         if (response.data === "success") {
-          alert("Obavijest uspješno poslana.");
+          setOpenSuccess(true);
+          //alert("Obavijest uspješno poslana.");
         } else {
-          alert("Došlo je do greške.");
+          setOpenError(true);
+          //alert("Došlo je do greške.");
         }
       }
     );
@@ -276,272 +307,303 @@ function NotificationManager() {
   }
 
   return (
-    <div className="notificationManager">
-      <Paper>
-        <TableContainer>
-          <Table stickyHeader aria-label="sticky table">
-            <EnhancedTableHead
-              classes={classes}
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onRequestSort={handleRequestSort}
-              rowCount={notificationList.length}
-              onSelectAllClick={() => {}}
-            />
-            <TableBody>
-              {stableSort(notificationList, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
-                  return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={row.code}
-                    >
-                      <StickyTableCell className={classes.cell}>
-                        <Popup
-                          trigger={
-                            <Button
-                              disabled={
-                                row["service_date_time"] !== null ? false : true
-                              }
-                              linkon="0"
-                              buttonstyle="btn--primary"
-                            >
-                              OBAVIJESTI
-                            </Button>
-                          }
-                          maxWidth="200px"
-                          maxHeight="auto"
-                          modal
-                          nested
-                          contentStyle={{
-                            width: "275px",
-                            height: "auto",
-                            border: "3px solid #242424",
-                            borderRadius: "3px",
-                          }}
-                        >
-                          {(close) => (
-                            <div className="modal">
-                              <div className="header">Slanje obavijesti</div>
-                              <div className="content">
-                                <div className="container">
-                                  <div className="message">
-                                    Osoba {row["buyer_name"]}{" "}
-                                    {row["buyer_surname"]} će biti obaviještena.{" "}
-                                    <br />
-                                  </div>
-                                </div>
-
-                                {!row["notification_mode"] ? (
-                                  <form
-                                    className="container"
-                                    onSubmit={handleSubmit(onSubmit)}
-                                  >
-                                    <Controller
-                                      name="notification_select"
-                                      control={control}
-                                      defaultValue=""
-                                      render={({ onChange, value, ref }) => (
-                                        <FormControl
-                                          variant="outlined"
-                                          className="notification--select"
-                                          size="small"
-                                        >
-                                          <InputLabel
-                                            id="notification"
-                                            label="Odaberi način kontaktiranja..."
-                                          >
-                                            Obavijesti putem...
-                                          </InputLabel>
-                                          <Select
-                                            labelId="notification"
-                                            id={
-                                              "notification_method" +
-                                              row["idorder"]
-                                            }
-                                            defaultValue="1"
-                                            value={value}
-                                            onChange={onChange}
-                                            inputRef={ref}
-                                            error={!!errors.notification_select}
-                                          >
-                                            <MenuItem
-                                              value={
-                                                "1_" +
-                                                row["e_mail"] +
-                                                "_" +
-                                                row["service_date_time"]
-                                              }
-                                            >
-                                              E-mail
-                                            </MenuItem>
-                                            <MenuItem
-                                              value={
-                                                "2_" +
-                                                row["e_mail"] +
-                                                "_" +
-                                                row["service_date_time"]
-                                              }
-                                            >
-                                              SMS poruka
-                                            </MenuItem>
-                                            <MenuItem
-                                              value={
-                                                "3_" +
-                                                row["e_mail"] +
-                                                "_" +
-                                                row["service_date_time"]
-                                              }
-                                            >
-                                              Telefonski poziv
-                                            </MenuItem>
-                                          </Select>
-                                        </FormControl>
-                                      )}
-                                      rules={{
-                                        required: true,
-                                      }}
-                                    />
-
-                                    <Button
-                                      buttonstyle="btn--primary"
-                                      linkon="0"
-                                      type="submit"
-                                      className="button"
-                                    >
-                                      POTVRDI
-                                    </Button>
-                                  </form>
-                                ) : (
+    <>
+      <div className="notificationManager">
+        <Paper>
+          <TableContainer>
+            <Table stickyHeader aria-label="sticky table">
+              <EnhancedTableHead
+                classes={classes}
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onRequestSort={handleRequestSort}
+                rowCount={notificationList.length}
+                onSelectAllClick={() => {}}
+              />
+              <TableBody>
+                {stableSort(notificationList, getComparator(order, orderBy))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => {
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={row.code}
+                      >
+                        <StickyTableCell className={classes.cell}>
+                          <Popup
+                            trigger={
+                              <Button
+                                disabled={
+                                  row["service_date_time"] !== null
+                                    ? false
+                                    : true
+                                }
+                                linkon="0"
+                                buttonstyle="btn--primary"
+                              >
+                                OBAVIJESTI
+                              </Button>
+                            }
+                            maxWidth="200px"
+                            maxHeight="auto"
+                            modal
+                            nested
+                            contentStyle={{
+                              width: "275px",
+                              height: "auto",
+                              border: "3px solid #242424",
+                              borderRadius: "3px",
+                            }}
+                          >
+                            {(close) => (
+                              <div className="modal">
+                                <div className="header">Slanje obavijesti</div>
+                                <div className="content">
                                   <div className="container">
                                     <div className="message">
-                                      Kontakt:{" "}
-                                      {row["notification_mode"] === 3
-                                        ? "Poziv " + row["phone_no"]
-                                        : row["notification_mode"] === 2
-                                        ? "SMS " + row["phone_no"]
-                                        : "E-mail " + row["e_mail"]}
+                                      Osoba {row["buyer_name"]}{" "}
+                                      {row["buyer_surname"]} će biti
+                                      obaviještena. <br />
                                     </div>
-
-                                    <Button
-                                      buttonstyle="btn--primary"
-                                      linkon="0"
-                                      type="submit"
-                                      className="button"
-                                      onClick={() => {
-                                        if (row["notification_mode"] !== 1) {
-                                          alert("Došlo je do greške.");
-                                          close();
-                                          return;
-                                        }
-
-                                        let time = format(
-                                          parse(
-                                            row["service_date_time"],
-                                            "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
-                                            new Date()
-                                          ),
-                                          "yyyy-MM-dd' u 'HH:mm"
-                                        );
-
-                                        const mailData = {
-                                          email: row["e_mail"],
-                                          subject:
-                                            "Obavijest o terminu izmjene guma - Gumiservis GS",
-                                          message:
-                                            "Poštovani,\n\nOvim Vas putem obavještavamo kako će se Vaša izmjena guma izvršiti " +
-                                            time +
-                                            " sati.\n\nSrdačan pozdrav,\nGumiservis GS",
-                                        };
-
-                                        sendNotification(mailData);
-
-                                        close();
-                                      }}
-                                    >
-                                      POTVRDI
-                                    </Button>
                                   </div>
-                                )}
+
+                                  {!row["notification_mode"] ? (
+                                    <form
+                                      className="container"
+                                      onSubmit={handleSubmit(onSubmit)}
+                                    >
+                                      <Controller
+                                        name="notification_select"
+                                        control={control}
+                                        defaultValue=""
+                                        render={({ onChange, value, ref }) => (
+                                          <FormControl
+                                            variant="outlined"
+                                            className="notification--select"
+                                            size="small"
+                                          >
+                                            <InputLabel
+                                              id="notification"
+                                              label="Odaberi način kontaktiranja..."
+                                            >
+                                              Obavijesti putem...
+                                            </InputLabel>
+                                            <Select
+                                              labelId="notification"
+                                              id={
+                                                "notification_method" +
+                                                row["idorder"]
+                                              }
+                                              defaultValue="1"
+                                              value={value}
+                                              onChange={onChange}
+                                              inputRef={ref}
+                                              error={
+                                                !!errors.notification_select
+                                              }
+                                            >
+                                              <MenuItem
+                                                value={
+                                                  "1_" +
+                                                  row["e_mail"] +
+                                                  "_" +
+                                                  row["service_date_time"]
+                                                }
+                                              >
+                                                E-mail
+                                              </MenuItem>
+                                              <MenuItem
+                                                value={
+                                                  "2_" +
+                                                  row["e_mail"] +
+                                                  "_" +
+                                                  row["service_date_time"]
+                                                }
+                                              >
+                                                SMS poruka
+                                              </MenuItem>
+                                              <MenuItem
+                                                value={
+                                                  "3_" +
+                                                  row["e_mail"] +
+                                                  "_" +
+                                                  row["service_date_time"]
+                                                }
+                                              >
+                                                Telefonski poziv
+                                              </MenuItem>
+                                            </Select>
+                                          </FormControl>
+                                        )}
+                                        rules={{
+                                          required: true,
+                                        }}
+                                      />
+
+                                      <Button
+                                        buttonstyle="btn--primary"
+                                        linkon="0"
+                                        type="submit"
+                                        className="button"
+                                      >
+                                        POTVRDI
+                                      </Button>
+                                    </form>
+                                  ) : (
+                                    <div className="container">
+                                      <div className="message">
+                                        Kontakt:{" "}
+                                        {row["notification_mode"] === 3
+                                          ? "Poziv " + row["phone_no"]
+                                          : row["notification_mode"] === 2
+                                          ? "SMS " + row["phone_no"]
+                                          : "E-mail " + row["e_mail"]}
+                                      </div>
+
+                                      <Button
+                                        buttonstyle="btn--primary"
+                                        linkon="0"
+                                        type="submit"
+                                        className="button"
+                                        onClick={() => {
+                                          if (row["notification_mode"] !== 1) {
+                                            setOpenError(true);
+                                            //alert("Došlo je do greške.");
+                                            close();
+                                            return;
+                                          }
+
+                                          let time = format(
+                                            parse(
+                                              row["service_date_time"],
+                                              "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
+                                              new Date()
+                                            ),
+                                            "yyyy-MM-dd' u 'HH:mm"
+                                          );
+
+                                          const mailData = {
+                                            email: row["e_mail"],
+                                            subject:
+                                              "Obavijest o terminu izmjene guma - Gumiservis GS",
+                                            message:
+                                              "Poštovani,\n\nOvim Vas putem obavještavamo kako će se Vaša izmjena guma izvršiti " +
+                                              time +
+                                              " sati.\n\nSrdačan pozdrav,\nGumiservis GS",
+                                          };
+
+                                          sendNotification(mailData);
+
+                                          close();
+                                        }}
+                                      >
+                                        POTVRDI
+                                      </Button>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                          )}
-                        </Popup>
-                      </StickyTableCell>
-                      {columns.map((column) => {
-                        const value = row[column.id] ? row[column.id] : "/";
+                            )}
+                          </Popup>
+                        </StickyTableCell>
+                        {columns.map((column) => {
+                          const value = row[column.id] ? row[column.id] : "/";
 
-                        return (
-                          <TableCell
-                            key={column.id + row["idorder"]}
-                            align={column.align}
-                            style={{
-                              minWidth: column.minWidth,
-                              maxWidth: column.maxWidth,
-                              whiteSpace: "nowrap",
-                              overflow: "auto",
-                            }}
-                          >
-                            {value !== "/" && column.id === "service_date_time"
-                              ? format(
-                                  parse(
-                                    value.toString(),
-                                    "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
-                                    new Date()
-                                  ),
-                                  "yyyy-MM-dd' u 'HH:mm"
-                                )
-                              : value}
-                          </TableCell>
-                        );
-                      })}
+                          return (
+                            <TableCell
+                              key={column.id + row["idorder"]}
+                              align={column.align}
+                              style={{
+                                minWidth: column.minWidth,
+                                maxWidth: column.maxWidth,
+                                whiteSpace: "nowrap",
+                                overflow: "auto",
+                              }}
+                            >
+                              {value !== "/" &&
+                              column.id === "service_date_time"
+                                ? format(
+                                    parse(
+                                      value.toString(),
+                                      "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
+                                      new Date()
+                                    ),
+                                    "yyyy-MM-dd' u 'HH:mm"
+                                  )
+                                : value}
+                            </TableCell>
+                          );
+                        })}
 
-                      {columnsUnsortable.map((column) => {
-                        const value = row[column.id] ? row[column.id] : "/";
+                        {columnsUnsortable.map((column) => {
+                          const value = row[column.id] ? row[column.id] : "/";
 
-                        return (
-                          <TableCell
-                            key={column.id + row["idorder"]}
-                            align={column.align}
-                            style={{
-                              minWidth: column.minWidth,
-                              maxWidth: column.maxWidth,
-                              whiteSpace: "nowrap",
-                              overflow: "auto",
-                            }}
-                          >
-                            {value !== "/" && column.id === "notification_mode"
-                              ? {
-                                  1: "E-mail",
-                                  2: "SMS",
-                                  3: "Telefonski poziv",
-                                }[value]
-                              : value}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                          return (
+                            <TableCell
+                              key={column.id + row["idorder"]}
+                              align={column.align}
+                              style={{
+                                minWidth: column.minWidth,
+                                maxWidth: column.maxWidth,
+                                whiteSpace: "nowrap",
+                                overflow: "auto",
+                              }}
+                            >
+                              {value !== "/" &&
+                              column.id === "notification_mode"
+                                ? {
+                                    1: "E-mail",
+                                    2: "SMS",
+                                    3: "Telefonski poziv",
+                                  }[value]
+                                : value}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
-          component="div"
-          count={notificationList.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
-      </Paper>
-    </div>
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 100]}
+            component="div"
+            count={notificationList.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onChangePage={handleChangePage}
+            onChangeRowsPerPage={handleChangeRowsPerPage}
+          />
+        </Paper>
+      </div>
+
+      <div className={classes.rootalert}>
+        <Snackbar
+          open={openSuccess}
+          autoHideDuration={3750}
+          onClose={handleCloseSuccess}
+        >
+          <Alert onClose={handleCloseSuccess} severity="success">
+            Poruka je uspješno poslana.
+          </Alert>
+        </Snackbar>
+
+        <Snackbar
+          open={openError}
+          autoHideDuration={3750}
+          onClose={handleCloseError}
+        >
+          <Alert onClose={handleCloseError} severity="error">
+            Došlo je do greške. Provjerite podatke i prihvatite uvjete.
+          </Alert>
+        </Snackbar>
+      </div>
+    </>
   );
 }
 

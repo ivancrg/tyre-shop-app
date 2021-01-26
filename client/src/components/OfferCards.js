@@ -34,7 +34,7 @@ function OfferCards() {
                   id={item.idoffer}
                   src={item.img_src}
                   alt={item.img_alt}
-                  //path={item.tyre_path}
+                  path={"/appointment/" + item.idoffer}
                   name={item.name}
                   code={item.idoffer}
                   data={item.data}

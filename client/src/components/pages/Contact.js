@@ -7,8 +7,42 @@ import { Button } from "@material-ui/core";
 import { useForm, Controller } from "react-hook-form";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
+import { makeStyles } from "@material-ui/core/styles";
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: "100%",
+    "& > * + *": {
+      marginTop: theme.spacing(2),
+    },
+  },
+}));
 
 export default function Contact() {
+  const classes = useStyles();
+  const [openSuccess, setOpenSuccess] = React.useState(false);
+  const [openError, setOpenError] = React.useState(false);
+
+  const handleCloseSuccess = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSuccess(false);
+  };
+
+  const handleCloseError = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenError(false);
+  };
+
   const {
     /*register,*/ handleSubmit,
     /*watch,*/ errors,
@@ -38,13 +72,28 @@ export default function Contact() {
             message: "",
           });
 
-          alert("Poruka uspješno poslana.");
+          setOpenSuccess(true);
+          //alert("Poruka je poslana.");
         } else {
-          alert("Došlo je do greške. Provjerite podatke.");
+          setOpenError(true);
+          //alert("Došlo je do greške. Provjerite podatke.");
         }
       }
     );
   };
+
+  React.useEffect(() => {
+    if (
+      errors.first_name ||
+      errors.last_name ||
+      errors.email ||
+      errors.subject ||
+      errors.message ||
+      errors.terms_conditions
+    ) {
+      setOpenError(true);
+    }
+  }, [errors]);
 
   return (
     <>
@@ -239,6 +288,28 @@ export default function Contact() {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className={classes.root}>
+        <Snackbar
+          open={openSuccess}
+          autoHideDuration={3750}
+          onClose={handleCloseSuccess}
+        >
+          <Alert onClose={handleCloseSuccess} severity="success">
+            Poruka je uspješno poslana.
+          </Alert>
+        </Snackbar>
+
+        <Snackbar
+          open={openError}
+          autoHideDuration={3750}
+          onClose={handleCloseError}
+        >
+          <Alert onClose={handleCloseError} severity="error">
+            Došlo je do greške. Provjerite podatke i prihvatite uvjete.
+          </Alert>
+        </Snackbar>
       </div>
     </>
   );

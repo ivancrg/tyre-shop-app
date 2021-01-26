@@ -19,8 +19,6 @@ const db = mysql.createPool({
   database: "tyre-shop-app",
 });
 
-var appointmentCode = -1;
-
 app.use(
   cors({
     origin: ["http://localhost:3000"],
@@ -419,18 +417,6 @@ app.post("/api/insertAppointment", (req, res) => {
       console.log(err);
     }
   );
-});
-
-app.post("/api/makeAppointment", (req, res) => {
-  console.log("Running on 3001/api/makeAppointment");
-  appointmentCode = req.body.idoffer;
-  console.log(appointmentCode);
-  res.send("Make appointment trigger detected");
-});
-
-app.get("/api/getAppointment", (req, res) => {
-  console.log("Running on 3001/api/getAppointment");
-  res.send(appointmentCode.toString());
 });
 
 app.listen(3001, () => {

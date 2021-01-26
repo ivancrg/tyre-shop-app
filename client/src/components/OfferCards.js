@@ -12,24 +12,34 @@ function OfferCards() {
     });
   }, []);
 
+  // const makeAppointment = (idoffer) => {
+  //   Axios.post("http://localhost:3001/api/makeAppointment", {
+  //     idoffer: idoffer,
+  //   }).then((response) => {
+  //     console.log(idoffer);
+  //     console.log(response);
+  //   });
+  // };
+
   return (
     <div className="cards">
-      <h1>OfferCards.js Line 6</h1>
+      <h1>Odaberite iz naše široke ponude</h1>
 
       <div className="cards__container">
         <div className="cards__wrapper">
           <ul className="cards__items" key="ul1">
-            {offerList.map((item) => (
+            {offerList.map((item, index) => (
               <>
                 <OfferCardItem
                   id={item.idoffer}
                   src={item.img_src}
                   alt={item.img_alt}
-                  path={item.tyre_path}
+                  //path={item.tyre_path}
                   name={item.name}
                   code={item.idoffer}
                   data={item.data}
                   price={item.price}
+                  onClick={console.log(index)}
                 />
               </>
             ))}

@@ -9,6 +9,8 @@ const saltRounds = 10; //konstanta za hashiranje
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const jwt = require("jsonwebtoken");
+const fileUpload = require("express-fileupload");
+const morgan = require("morgan");
 
 const db = mysql.createPool({
   host: "localhost",
@@ -16,6 +18,8 @@ const db = mysql.createPool({
   password: "",
   database: "tyre-shop-app",
 });
+
+var appointmentCode = -1;
 
 app.use(
   cors({
@@ -39,6 +43,12 @@ app.use(
     },
   })
 );
+app.use(
+  fileUpload({
+    createParentPath: true,
+  })
+);
+app.use(morgan("dev"));
 
 const verifyJWT = (req, res, next) => {
   const token = req.headers["x-access-token"]; //uzimamo jwt kroz header
@@ -227,6 +237,52 @@ app.put("/api/updateNotification", (req, res) => {
   );
 });
 
+app.post("/api/insertOffer", (req, res) => {
+  console.log("Running on 3001/api/insertOffer");
+
+  try {
+    if (!req.files || !req.body) {
+      res.send({
+        status: false,
+        message: "Došlo je do greške", //"No files/body.",
+      });
+    } else {
+      //SPREMANJE SLIKE
+      const { picture } = req.files;
+      picture.mv("../client/public/images/" + picture.name);
+      picture.mv("../client/src/images/" + picture.name);
+
+      //UNOS PODATAKA U BAZU
+      const img_src = "../images/" + picture.name;
+      const img_alt = req.body.img_alt;
+      const tyre_path = "/" + req.body.name;
+      const name = req.body.name;
+      const data = req.body.data;
+      const price = req.body.price;
+
+      const sqlInsert =
+        "INSERT INTO offers (img_src, img_alt, tyre_path, name, data, price) VALUES (?, ?, ?, ?, ?, ?)";
+
+      db.query(
+        sqlInsert,
+        [img_src, img_alt, tyre_path, name, data, price],
+        (error, result) => {
+          if (error) {
+            console.log(error);
+          }
+        }
+      );
+
+      res.send({
+        status: true,
+        message: "Nova ponuda unesena.",
+      });
+    }
+  } catch (e) {
+    res.status(500).send(e);
+  }
+});
+
 app.get("/api/getOffers", (req, res) => {
   console.log("Running on 3001/api/getOffers");
 
@@ -354,6 +410,18 @@ app.post("/api/insertAppointment", (req, res) => {
       console.log(err);
     }
   );
+});
+
+app.post("/api/makeAppointment", (req, res) => {
+  console.log("Running on 3001/api/makeAppointment");
+  appointmentCode = req.body.idoffer;
+  console.log(appointmentCode);
+  res.send("Make appointment trigger detected");
+});
+
+app.get("/api/getAppointment", (req, res) => {
+  console.log("Running on 3001/api/getAppointment");
+  res.send(appointmentCode.toString());
 });
 
 app.listen(3001, () => {

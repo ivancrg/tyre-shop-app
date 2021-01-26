@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useEffect } from "react";
 import "../../App.css";
 import Axios from "axios";
 import TextField from "@material-ui/core/TextField";
@@ -13,7 +13,12 @@ import Select from "@material-ui/core/Select";
 import { useForm, Controller } from "react-hook-form";
 
 export default function App() {
-  const { /*register,*/ handleSubmit, /*watch,*/ errors, control } = useForm();
+  const {
+    /*register,*/ handleSubmit,
+    /*watch,*/ errors,
+    control,
+    reset,
+  } = useForm();
 
   const onSubmit = (data) => {
     console.log(data);
@@ -37,6 +42,20 @@ export default function App() {
   // React.useEffect(() => {
   //   console.log(errors);
   // }, [errors]);
+
+  // React.useEffect(() => {
+  //   Axios.get("http://localhost:3001/api/getAppointment").then((response) => {
+  //     setAppointmentCode(response.data);
+  //   });
+  // }, []);
+
+  useEffect(() => {
+    Axios.get("http://localhost:3001/api/getAppointment").then((response) => {
+      if (response.data > 0) {
+        reset({ offer_code: response.data });
+      }
+    });
+  });
 
   return (
     <form className="appointment" onSubmit={handleSubmit(onSubmit)}>
@@ -64,7 +83,7 @@ export default function App() {
           rules={{
             required: "Obavezno polje",
             pattern: {
-              value: /^[A-Za-zšđčćžŠĐČĆŽ]+$/i,
+              value: /^[A-Za-zšđčćžŠĐČĆŽ ]+$/i,
               message: "Unesite ime.",
             },
           }}
@@ -93,7 +112,7 @@ export default function App() {
           rules={{
             required: "Obavezno polje",
             pattern: {
-              value: /^[A-Za-zšđčćžŠĐČĆŽ]+$/i,
+              value: /^[A-Za-zšđčćžŠĐČĆŽ ]+$/i,
               message: "Unesite prezime.",
             },
           }}
@@ -358,7 +377,7 @@ export default function App() {
               aria-label="Dodatni komentar"
               id="comment"
               rowsMin={5}
-              placeholder="  Komentar..."
+              placeholder="Komentar..."
               className="comment--textarea"
               value={value}
               onChange={onChange}

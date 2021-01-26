@@ -8,6 +8,7 @@
 .home,
 .offer,
 .appointment,
+.offerManager,
 .notification,
 .help,
 .contact,
@@ -21,6 +22,7 @@
 
 .appointment,
 .notification,
+.offerManager,
 .help,
 .contact,
 .login {
@@ -46,6 +48,7 @@
   max-width: 750px;
 }
 
+.offerManager > .form--container > .title,
 .appointment > .form--container > .title,
 .notification > .form--container > .title {
   text-align: start;

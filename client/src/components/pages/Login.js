@@ -4,7 +4,6 @@ import Axios from "axios";
 import { useForm, Controller } from "react-hook-form";
 import TextField from "@material-ui/core/TextField";
 import { Button } from "@material-ui/core";
-import { Link } from "react-router-dom";
 
 export default function Login() {
   const { /*register,*/ handleSubmit, /*watch,*/ errors, control } = useForm();
@@ -113,6 +112,25 @@ export default function Login() {
                   buttonstyle="btn--primary"
                   buttonsize="btn--large"
                   href="/notificationManager"
+                >
+                  POKRENI
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <div className="loggedin--info--row">
+            <div className="loggedin--info--column--title">
+              Upravitelj ponudama
+            </div>
+            <div className="loggedin--info--column">
+              <div className="loggedin--info--row">
+                <Button
+                  linkon="0"
+                  className="btns"
+                  buttonstyle="btn--primary"
+                  buttonsize="btn--large"
+                  href="/offerManager"
                 >
                   POKRENI
                 </Button>

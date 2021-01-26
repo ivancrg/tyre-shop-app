@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Axios from "axios";
 import { Link } from "react-router-dom";
 import "./Navbar.css";
 import { Button } from "./Button";
@@ -88,13 +89,13 @@ function Navbar() {
                 className="nav-links-mobile"
                 onClick={closeMobileMenu}
               >
-                Prijavi se
+                PRIJAVA
               </Link>
             </li>
           </ul>
           {button && (
             <Button linkon="1" linkpath="/Login" buttonstyle="btn--outline">
-              Prijavi se
+              PRIJAVA
             </Button>
           )}
         </div>

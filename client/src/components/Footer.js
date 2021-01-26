@@ -7,24 +7,20 @@ function Footer() {
   return (
     <div className="footer-container">
       <section className="footer-subscription">
-        <p className="footer-subscription-heading">
-          Footer.js Line 11 to customize text
-        </p>
+        <p className="footer-subscription-heading">GUMISERVIS GS</p>
 
-        <p className="footer-subscription-text">
-          Footer.js Line 15 to customize text
-        </p>
+        <p className="footer-subscription-text">RIJEKA</p>
 
         <div className="input-areas">
           <form>
             <input
               type="email"
               name="email"
-              placeholder="Your e-mail Footer.js L17"
+              placeholder="Vaša adresa e-pošte..."
               className="footer-input"
             />
-            <Button linkon="1" linkpath="/subscribe" buttonstyle="btn--outline">
-              Subscribe (Footer.js L27)
+            <Button linkon="0" buttonstyle="btn--outline">
+              Prijavite se na newsletter
             </Button>
           </form>
         </div>
@@ -33,29 +29,29 @@ function Footer() {
       <div className="footer-links">
         <div className="footer-link-wrapper">
           <div className="footer-link-items">
-            <h2>About us Footer.js:28</h2>
-            <Link to="/">O nama1</Link>
-            <Link to="/contact">Kontakt1</Link>
+            <h2>O nama</h2>
+            <Link to="/">Početna</Link>
+            <Link to="/contact">Kontakt</Link>
           </div>
 
           <div className="footer-link-items">
-            <h2>About us Footer.js:35</h2>
-            <Link to="/">O nama2</Link>
-            <Link to="/contact">Kontakt2</Link>
+            <h2>Kontakt</h2>
+            <Link to="/">Početna</Link>
+            <Link to="/contact">Kontakt</Link>
           </div>
         </div>
 
         <div className="footer-link-wrapper">
           <div className="footer-link-items">
-            <h2>About us Footer.js:43</h2>
-            <Link to="/">O nama3</Link>
-            <Link to="/contact">Kontakt3</Link>
+            <h2>Pitanja</h2>
+            <Link to="/">Početna</Link>
+            <Link to="/help">Pomoć</Link>
           </div>
 
           <div className="footer-link-items">
-            <h2>About us Footer.js:49</h2>
-            <Link to="/">O nama4</Link>
-            <Link to="/contact">Kontakt4</Link>
+            <h2>Za administratore</h2>
+            <Link to="/">Početna</Link>
+            <Link to="/login">Prijava</Link>
           </div>
         </div>
       </div>

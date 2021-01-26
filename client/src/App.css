@@ -11,7 +11,7 @@
 .notification,
 .help,
 .contact,
-.log-in {
+.login {
   display: flex;
   height: 90vh;
   align-items: center;
@@ -22,7 +22,8 @@
 .appointment,
 .notification,
 .help,
-.contact {
+.contact,
+.login {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -130,6 +131,34 @@
   white-space: nowrap;
 }
 
+.manager--login--button {
+  margin: auto;
+  justify-content: center;
+  width: 94px;
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
+.login--logout--button {
+  margin: auto;
+  justify-content: center;
+  width: 94px;
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
+.loggedin--links {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: auto;
+  justify-content: center;
+  width: 55px;
+  border: 1px solid blue;
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
 .modal {
   font-size: 12px;
 }
@@ -182,7 +211,7 @@
 }
 
 .offer {
-  background-image: url("./images/img-2.jpg");
+  background-image: url("./images/img-offer.jpg");
   background-position: center;
   background-size: fill;
   background-repeat: no-repeat;
@@ -191,7 +220,6 @@
 }
 
 .log-in {
-  background-image: url("./images/img-8.jpg");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -203,20 +231,28 @@
   padding-bottom: 35px;
 }
 
-.contact--info--row {
+.loggedin--info {
+  margin-top: 110px;
+  margin-bottom: 110px;
+}
+
+.contact--info--row,
+.loggedin--info--row {
   display: flex;
   justify-content: center;
   /* border: 1px solid greenyellow; */
   font-size: 1.25rem;
 }
 
-.contact--info--column {
+.contact--info--column,
+.loggedin--info--column {
   width: 25%;
   /* border: 1px solid salmon; */
   font-size: 2rem;
 }
 
-.contact--info--column--title {
+.contact--info--column--title,
+.loggedin--info--column--title {
   display: flex;
   justify-content: center;
   align-items: center;

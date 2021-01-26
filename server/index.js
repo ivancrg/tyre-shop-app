@@ -4,6 +4,11 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const mysql = require("mysql");
 const nodemailer = require("nodemailer");
+const bcrypt = require("bcrypt");
+const saltRounds = 10; //konstanta za hashiranje
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
+const jwt = require("jsonwebtoken");
 
 const db = mysql.createPool({
   host: "localhost",
@@ -12,10 +17,119 @@ const db = mysql.createPool({
   database: "tyre-shop-app",
 });
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:3000"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 app.use(express.json()); //grabbing info from frontend as json
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(
+  session({
+    key: "userID", //ime cookiea koji radimo
+    secret: "subscribe", //moramo pazit s ovom, nitko ju ne bi smio znati
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      expires: 15 * 60 * 1000, //istek cookiea nakon 15min
+    },
+  })
+);
+
+const verifyJWT = (req, res, next) => {
+  const token = req.headers["x-access-token"]; //uzimamo jwt kroz header
+
+  if (!token) {
+    //res.send("Hey, I need a token!");
+    res.send(false);
+  } else {
+    jwt.verify(token, "jwtSecret", (err, decoded) => {
+      if (err) {
+        //res.json({ auth: false, message: "You failed to authenticate!" });
+        res.send(false);
+      } else {
+        req.userID = decoded.id;
+        next();
+      }
+    });
+  }
+};
+
+// app.post("/register", (req, res) => {
+//   const username = req.body.username;
+//   const password = req.body.password;
+
+//   bcrypt.hash(password, saltRounds, (err, hash) => {
+//     if (err) {
+//       console.log(err);
+//     } else {
+//       const sqlInsert = "INSERT INTO users (username, password) VALUES (?, ?)";
+
+//       db.query(sqlInsert, [username, hash], (err, result) => {
+//         //console.log('Result: '); console.log(result);
+//         console.log("Error: ");
+//         console.log(err);
+//       });
+//     }
+//   });
+// });
+
+// app.get("/isAuth", verifyJWT, (req, res) => {
+//   //res.send("hey, you are authenticated.");
+//   res.send(true);
+// });
+
+app.get("/logout", verifyJWT, (req, res) => {
+  req.session.destroy();
+  res.send(true);
+});
+
+app.get("/login", verifyJWT, (req, res) => {
+  if (req.session.user) {
+    res.send({ loggedIn: true, user: req.session.user });
+  } else {
+    res.send({ loggedIn: false });
+  }
+});
+
+app.post("/login", (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
+
+  const sqlSelect = "SELECT * FROM users WHERE username = ?";
+
+  db.query(sqlSelect, username, (err, result) => {
+    //console.log('Result: '); console.log(result);
+    console.log("Error:");
+    console.log(err);
+
+    if (result.length > 0) {
+      bcrypt.compare(password, result[0].password, (error, response) => {
+        if (response) {
+          //dobri podaci, prije res.send stvaramo sesiju koja se zove user koju ćemo kasnije pozivati
+          //JWT
+          const id = result[0].idusers;
+          const token = jwt.sign({ id }, "jwtSecret", {
+            expiresIn: 15 * 60, //istječe za 15min
+          }); //jwtSecret treba inače biti u .env (ne objaviti bez toga)
+          req.session.user = result;
+
+          res.json({ auth: true, token: token, result: result[0].username }); //autorizirano, nije autentificirano, šaljemo mu token za autentifikaciju
+        } else {
+          //krivi password
+          res.json({ auth: false, message: "Provjerite unesene podatke." });
+        }
+      });
+    } else {
+      //krivi username (mozda i pwd)
+      res.json({ auth: false, message: "Provjerite unesene podatke (KNP)." });
+    }
+  });
+});
 
 app.post("/api/sendMail", (req, res) => {
   console.log(req.body.email);
@@ -127,20 +241,6 @@ app.get("/api/getOffers", (req, res) => {
   });
 });
 
-app.get("/api/getAppointments", (req, res) => {
-  console.log("Running on 3001/api/getAppointments");
-
-  const sqlSelect = "SELECT * FROM orders";
-
-  db.query(sqlSelect, (err, result) => {
-    res.send(result);
-    //console.log("Result: ");
-    //console.log(result);
-    console.log("Error: ");
-    console.log(err);
-  });
-});
-
 app.get("/api/getQuestions", (req, res) => {
   console.log("Running on 3001/api/getQuestions");
 
@@ -162,6 +262,21 @@ app.put("/api/setQuestionsOpen", (req, res) => {
 
   db.query(sqlUpdate, [open, id], (err, result) => {
     console.log("Error: " + err);
+  });
+});
+
+app.get("/api/getAppointments", (req, res) => {
+  console.log("Running on 3001/api/getAppointments");
+
+  const sqlSelect = "SELECT * FROM orders";
+
+  db.query(sqlSelect, (err, result) => {
+    //console.log("Result: ");
+    //console.log(result);
+    console.log("Error: ");
+    console.log(err);
+
+    res.send(result);
   });
 });
 
@@ -240,33 +355,6 @@ app.post("/api/insertAppointment", (req, res) => {
     }
   );
 });
-
-// app.delete('/api/delete/:movieID', (req, res) => {
-//     console.log('Running on 3001/api/delete');
-
-//     const id = req.params.movieID; //varijabla iz App.js
-
-//     const sqlDelete = "DELETE FROM movie_reviews WHERE id = ?";
-
-//     db.query(sqlDelete, id, (err, result) => {
-//         console.log('Result: '); console.log(result);
-//         console.log('Error: '); console.log(err);
-//     });
-// });
-
-// app.put('/api/update', (req, res) => {
-//     console.log('Running on 3001/api/update');
-
-//     const id = req.body.movieID;
-//     const review = req.body.movieReview;
-
-//     const sqlUpdate = "UPDATE movie_reviews SET movieReview = ? WHERE id = ?";
-
-//     db.query(sqlUpdate, [review, id], (err, result) => {
-//         console.log('Result: '); console.log(result);
-//         console.log('Error: '); console.log(err);
-//     });
-// });
 
 app.listen(3001, () => {
   console.log("Running on port 3001");

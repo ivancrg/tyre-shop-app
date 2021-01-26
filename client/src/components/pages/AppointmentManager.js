@@ -42,6 +42,19 @@ function AppointmentManager() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [appointmentList, setAppointmentList] = useState([]);
+  const [loginStatus, setLoginStatus] = useState(false);
+
+  Axios.defaults.withCredentials = true;
+
+  useEffect(() => {
+    Axios.get("http://localhost:3001/login", {
+      headers: {
+        "x-access-token": localStorage.getItem("token"),
+      },
+    }).then((response) => {
+      setLoginStatus(response.data.loggedIn);
+    });
+  }, []);
 
   var appointmentDate = format(toDate(new Date()), "yyyy-MM-dd'T'HH:mm");
   function setAppointmentDate(date) {
@@ -88,6 +101,22 @@ function AppointmentManager() {
   }
 
   const classes = useStyles();
+
+  if (!loginStatus) {
+    return (
+      <div className="manager--login--button">
+        <Button
+          linkon="0"
+          className="btns"
+          buttonstyle="btn--outline"
+          buttonsize="btn--large"
+          href="/login"
+        >
+          PRIJAVI SE
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="appointmentManager">

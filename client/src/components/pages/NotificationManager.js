@@ -179,6 +179,20 @@ function NotificationManager() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [notificationList, setNotificationList] = useState([]);
 
+  const [loginStatus, setLoginStatus] = useState(false);
+
+  Axios.defaults.withCredentials = true;
+
+  useEffect(() => {
+    Axios.get("http://localhost:3001/login", {
+      headers: {
+        "x-access-token": localStorage.getItem("token"),
+      },
+    }).then((response) => {
+      setLoginStatus(response.data.loggedIn);
+    });
+  }, []);
+
   const { /*register,*/ handleSubmit, /*watch,*/ errors, control } = useForm();
 
   const onSubmit = (data) => {
@@ -244,6 +258,22 @@ function NotificationManager() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  if (!loginStatus) {
+    return (
+      <div className="manager--login--button">
+        <Button
+          linkon="0"
+          className="btns"
+          buttonstyle="btn--outline"
+          buttonsize="btn--large"
+          href="/login"
+        >
+          PRIJAVI SE
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="notificationManager">

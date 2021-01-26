@@ -1,61 +1,61 @@
-import React from 'react'
-import CardItem from './CardItem'
-import './Cards.css'
+import React from "react";
+import CardItem from "./CardItem";
+import "./Cards.css";
 
 function Cards() {
-    return (
-        <div className="cards">
-            <h1>Cards.js Line 6</h1>
+  return (
+    <div className="cards">
+      <h1>Cards.js Line 6</h1>
 
-            <div className="cards__container">
-                <div className="cards__wrapper">
-                    <ul className="cards__items">
-                        <CardItem
-                            src="../images/img-9.jpg"
-                            alt="Cards.js Line 15"
-                            text="Cards.js Line 16"
-                            label="Cards.js Line 17"
-                            path="/Cards.jsLine18"
-                        />
+      <div className="cards__container">
+        <div className="cards__wrapper">
+          <ul className="cards__items">
+            <CardItem
+              src="../images/cards-1.jpg"
+              alt="Težina i dimenzija gume"
+              text="Težina i dimenzija gume jedna je od njenih glavnih karakteristika."
+              label="Težina i dimenzija gume"
+              path="/Cards.jsLine18"
+            />
 
-                        <CardItem
-                            src="../images/img-5.jpg"
-                            alt="Cards.js Line 23"
-                            text="Cards.js Line 24"
-                            label="Cards.js Line 25"
-                            path="/Cards.jsLine26"
-                        />
-                    </ul>
+            <CardItem
+              src="../images/cards-2.jpg"
+              alt="Performanse gume"
+              text="Performanse gume po mokroj podlozi su glavni kriterij za kupnju kod mngih kupaca."
+              label="Performanse gume"
+              path="/Cards.jsLine26"
+            />
+          </ul>
 
-                    <ul className="cards__items">
-                        <CardItem
-                            src="../images/img-9.jpg"
-                            alt="Cards.js Line 33"
-                            text="Cards.js Line 34"
-                            label="Cards.js Line 35"
-                            path="/Cards.jsLine36"
-                        />
+          <ul className="cards__items">
+            <CardItem
+              src="../images/cards-3.jpg"
+              alt="Potrošnja gume"
+              text="Odabir gume koja se sporo troši utječe na učestalost potrebe za novim setom guma."
+              label="Potrošnja gume"
+              path="/Cards.jsLine36"
+            />
 
-                        <CardItem
-                            src="../images/img-5.jpg"
-                            alt="Cards.js Line 41"
-                            text="Cards.js Line 42"
-                            label="Cards.js Line 43"
-                            path="/Cards.jsLine44"
-                        />
+            <CardItem
+              src="../images/cards-4.jpg"
+              alt="Sigurnost gume"
+              text="Sigurnost gume je na vrhu prioriteta svakog proizvođača."
+              label="Sigurnost gume"
+              path="/Cards.jsLine44"
+            />
 
-                        <CardItem
-                            src="../images/img-5.jpg"
-                            alt="Cards.js Line 49"
-                            text="Cards.js Line 50"
-                            label="Cards.js Line 51"
-                            path="/Cards.jsLine52"
-                        />
-                    </ul>
-                </div>
-            </div>
+            <CardItem
+              src="../images/cards-5.jpg"
+              alt="Prianjanje gume"
+              text="Kod svih uporaba gume na stazi, jedno od njenih najvažnijih odlika je prianjanje."
+              label="Prianjanje gume"
+              path="/Cards.jsLine52"
+            />
+          </ul>
         </div>
-    )
+      </div>
+    </div>
+  );
 }
 
-export default Cards
+export default Cards;

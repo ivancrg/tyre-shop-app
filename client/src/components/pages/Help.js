@@ -29,8 +29,8 @@ export default function Help() {
       <div className="form--container">
         <p className="title">Pomoć</p>
         <p className="text">
-          Ova stranica je namijenjena za upravljanje Gumi servisom.... <br />U
-          Help.js promjeniti tekst
+          Budući da za sve postoje pitanja, na najčešća vezana za izmjenu guma
+          smo pokušali odgovoriti.
         </p>
       </div>
       <div className="form--container">

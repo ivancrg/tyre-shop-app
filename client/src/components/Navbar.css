@@ -16,10 +16,11 @@
   align-items: center;
   height: 80px;
   max-width: 1500px;
+  color: #ffffff;
 }
 
 .navbar-logo {
-  color: #fff;
+  color: #ffffff;
   justify-self: start;
   margin-left: 20px;
   cursor: pointer;

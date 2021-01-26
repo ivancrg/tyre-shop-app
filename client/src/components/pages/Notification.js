@@ -11,7 +11,12 @@ import { Button, Radio, RadioGroup } from "@material-ui/core";
 import { useForm, Controller } from "react-hook-form";
 
 export default function Notification() {
-  const { /*register,*/ handleSubmit, /*watch,*/ errors, control } = useForm();
+  const {
+    /*register,*/ handleSubmit,
+    /*watch,*/ errors,
+    control,
+    reset,
+  } = useForm();
 
   const onSubmit = (data) => {
     //console.log(data);
@@ -21,9 +26,14 @@ export default function Notification() {
       notification_mode: data["notification_mode"],
       notification_interval: data["notification_interval"],
     }).then((response) => {
-      if (response === "error") {
-        alert("Došlo je do greške.");
+      if (!response.data) {
+        alert("Došlo je do greške, provjerite broj računa.");
       } else {
+        reset({
+          receipt: "",
+          notification_mode: "",
+          notification_interval: "",
+        });
         alert("Uspješno zapisan način obavještavanja.");
       }
     });

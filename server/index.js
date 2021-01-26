@@ -216,25 +216,34 @@ app.put("/api/updateNotification", (req, res) => {
   const notification_mode = req.body.notification_mode;
   const notification_interval = req.body.notification_interval;
 
-  const sqlUpdate =
-    "UPDATE orders SET notification_mode = ?, notification_interval = ? WHERE receipt_no = ?";
+  const sqlSelect = "SELECT idorder FROM orders WHERE receipt_no = ?";
+  db.query(sqlSelect, receipt, (error, result) => {
+    if (error || result.length < 1) {
+      console.log(error);
+      res.send(false);
+      return;
+    } else {
+      const sqlUpdate =
+        "UPDATE orders SET notification_mode = ?, notification_interval = ? WHERE receipt_no = ?";
 
-  db.query(
-    sqlUpdate,
-    [notification_mode, notification_interval, receipt],
-    (error, result) => {
-      // console.log("Result: ");
-      // console.log(result);
-      // console.log("Error: ");
-      // console.log(err);
-      if (error) {
-        console.log(error);
-        res.send("error");
-      } else {
-        res.send("success");
-      }
+      db.query(
+        sqlUpdate,
+        [notification_mode, notification_interval, receipt],
+        (error, result) => {
+          // console.log("Result: ");
+          // console.log(result);
+          // console.log("Error: ");
+          // console.log(err);
+          if (error) {
+            console.log(error);
+            res.send(false);
+          } else {
+            res.send(true);
+          }
+        }
+      );
     }
-  );
+  });
 });
 
 app.post("/api/insertOffer", (req, res) => {

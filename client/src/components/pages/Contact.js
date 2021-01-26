@@ -9,7 +9,12 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 
 export default function Contact() {
-  const { /*register,*/ handleSubmit, /*watch,*/ errors, control } = useForm();
+  const {
+    /*register,*/ handleSubmit,
+    /*watch,*/ errors,
+    control,
+    reset,
+  } = useForm();
 
   const onSubmit = (data) => {
     //console.log(data);
@@ -25,9 +30,17 @@ export default function Contact() {
     Axios.post("http://localhost:3001/api/sendMail", mailData).then(
       (response) => {
         if (response.data === "success") {
+          reset({
+            first_name: "",
+            last_name: "",
+            email: "",
+            subject: "",
+            message: "",
+          });
+
           alert("Poruka uspješno poslana.");
         } else {
-          alert("Došlo je do greške.");
+          alert("Došlo je do greške. Provjerite podatke.");
         }
       }
     );

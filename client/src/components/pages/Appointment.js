@@ -37,6 +37,19 @@ export default function App() {
         "/" +
         data["tyre_diameter"],
     });
+
+    reset({
+      buyer_surname: "",
+      offer_code: "",
+      quantity: "",
+      e_mail: "",
+      phone_no: "",
+      comments: "",
+      tyre_width: "",
+      tyre_height: "",
+      tyre_diameter: "",
+    });
+    alert("Narudžba zabilježena.");
   };
 
   // React.useEffect(() => {

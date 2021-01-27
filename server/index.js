@@ -148,7 +148,7 @@ app.post("/api/sendMail", (req, res) => {
     service: "gmail",
     auth: {
       user: "test.rwa.riteh@gmail.com",
-      pass: "ritehRWA?",
+      pass: "&RWA!RITEH=",
     },
   });
 
@@ -185,7 +185,7 @@ app.post("/api/sendNotification", (req, res) => {
     service: "gmail",
     auth: {
       user: "test.rwa.riteh@gmail.com",
-      pass: "ritehRWA?",
+      pass: "&RWA!RITEH=",
     },
   });
 

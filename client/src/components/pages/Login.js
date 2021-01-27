@@ -4,11 +4,45 @@ import Axios from "axios";
 import { useForm, Controller } from "react-hook-form";
 import TextField from "@material-ui/core/TextField";
 import { Button } from "@material-ui/core";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
+import { makeStyles } from "@material-ui/core/styles";
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: "100%",
+    "& > * + *": {
+      marginTop: theme.spacing(2),
+    },
+  },
+}));
 
 export default function Login() {
   const { /*register,*/ handleSubmit, /*watch,*/ errors, control } = useForm();
 
   const [loginStatus, setLoginStatus] = useState(false);
+
+  const classes = useStyles();
+  const [openSuccess, setOpenSuccess] = useState(false);
+  const [openError, setOpenError] = useState(false);
+
+  const handleCloseSuccess = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSuccess(false);
+  };
+
+  const handleCloseError = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenError(false);
+  };
 
   Axios.defaults.withCredentials = true;
 
@@ -40,7 +74,8 @@ export default function Login() {
     }).then((response) => {
       if (!response.data.auth) {
         setLoginStatus(false);
-        alert("Provjerite unesene podatke.");
+        setOpenError(true);
+        //alert("Provjerite unesene podatke.");
       } else {
         localStorage.setItem("token", response.data.token);
         setLoginStatus(true);
@@ -66,9 +101,11 @@ export default function Login() {
     }).then((response) => {
       if (response.data) {
         setLoginStatus(false);
-        alert("Uspješno ste odjavljeni.");
+        setOpenSuccess(true);
+        //alert("Uspješno ste odjavljeni.");
       } else {
-        alert("Došlo je do greške.");
+        setOpenError(true);
+        //alert("Došlo je do greške.");
       }
     });
   };
@@ -160,77 +197,102 @@ export default function Login() {
   }
 
   return (
-    <form className="login" onSubmit={handleSubmit(onSubmit)}>
-      <div className="form--container">
-        <p className="title">Podaci za prijavu</p>
-        <Controller
-          name="username"
-          control={control}
-          defaultValue=""
-          render={({ onChange, value, ref }) => (
-            <TextField
-              id="username"
-              variant="outlined"
-              label="Korisničko ime"
-              className="container--item"
-              placeholder="korisnicko_ime"
-              size="small"
-              value={value}
-              onChange={onChange}
-              inputRef={ref}
-              error={!!errors.username}
-              helperText={errors?.username?.message || ""}
-            />
-          )}
-          rules={{
-            required: "Obavezno polje",
-            pattern: {
-              value: /^[a-zA-Z0-9\-_.:]+$/i,
-              message: "Unesite korisničko ime.",
-            },
-          }}
-        />
+    <>
+      <form className="login" onSubmit={handleSubmit(onSubmit)}>
+        <div className="form--container">
+          <p className="title">Podaci za prijavu</p>
+          <Controller
+            name="username"
+            control={control}
+            defaultValue=""
+            render={({ onChange, value, ref }) => (
+              <TextField
+                id="username"
+                variant="outlined"
+                label="Korisničko ime"
+                className="container--item"
+                placeholder="korisnicko_ime"
+                size="small"
+                value={value}
+                onChange={onChange}
+                inputRef={ref}
+                error={!!errors.username}
+                helperText={errors?.username?.message || ""}
+              />
+            )}
+            rules={{
+              required: "Obavezno polje",
+              pattern: {
+                value: /^[a-zA-Z0-9\-_.:]+$/i,
+                message: "Unesite korisničko ime.",
+              },
+            }}
+          />
 
-        <Controller
-          name="pass"
-          control={control}
-          defaultValue=""
-          render={({ onChange, value, ref }) => (
-            <TextField
-              id="pass"
-              variant="outlined"
-              label="Lozinka"
-              className="container--item"
-              placeholder="lozinka"
-              size="small"
-              value={value}
-              onChange={onChange}
-              inputRef={ref}
-              error={!!errors.pass}
-              helperText={errors?.pass?.message || ""}
-            />
-          )}
-          rules={{
-            required: "Obavezno polje",
-            pattern: {
-              value: /^.{7,37}$/,
-              message: "Unesite lozinku (7-37 znakova).",
-            },
-          }}
-        />
-      </div>
+          <Controller
+            name="pass"
+            control={control}
+            defaultValue=""
+            render={({ onChange, value, ref }) => (
+              <TextField
+                id="pass"
+                variant="outlined"
+                type="password"
+                label="Lozinka"
+                className="container--item"
+                placeholder="Lozinka"
+                size="small"
+                value={value}
+                onChange={onChange}
+                inputRef={ref}
+                error={!!errors.pass}
+                helperText={errors?.pass?.message || ""}
+              />
+            )}
+            rules={{
+              required: "Obavezno polje",
+              pattern: {
+                value: /^.{7,37}$/,
+                message: "Unesite lozinku (7-37 znakova).",
+              },
+            }}
+          />
+        </div>
 
-      <div className="form--container">
-        <Button
-          className="submit--button"
-          linkon="0"
-          buttonsize="btn--large"
-          buttonstyle="btn--primary"
-          type="submit"
+        <div className="form--container">
+          <Button
+            className="submit--button"
+            linkon="0"
+            buttonsize="btn--large"
+            buttonstyle="btn--primary"
+            type="submit"
+          >
+            PRIJAVI SE
+          </Button>
+        </div>
+      </form>
+
+      <div className={classes.root}>
+        <Snackbar
+          open={openSuccess}
+          autoHideDuration={3750}
+          onClose={handleCloseSuccess}
         >
-          PRIJAVI SE
-        </Button>
+          <Alert onClose={handleCloseSuccess} severity="success">
+            Uspješno izvršeno.
+          </Alert>
+        </Snackbar>
+
+        <Snackbar
+          open={openError}
+          autoHideDuration={3750}
+          onClose={handleCloseError}
+        >
+          <Alert onClose={handleCloseError} severity="error">
+            Došlo je do greške. Provjerite podatke.
+          </Alert>
+        </Snackbar>
       </div>
-    </form>
+    </>
   );
 }

@@ -12,7 +12,26 @@ function Footer() {
         <p className="footer-subscription-text">RIJEKA</p>
 
         <div className="input-areas">
-          <form>
+          {/* <iframe
+            src="https://www.google.com/maps/embed/v1/view?key=AIzaSyB5_nIY9l799L4oBO88HSpPO_uN_RquEG4&center=-33.8569,151.2152&zoom=18&maptype=satellite"
+            title="Naša lokacija"
+            frameBorder="0"
+            style={{ border: 0 }}
+            allowFullScreen=""
+            aria-hidden="false"
+            tabIndex="0"
+          /> */}
+
+          <iframe
+            width="75%"
+            height="300px"
+            title="Naša lokacija"
+            src="https://maps.google.com/maps?q=Tehnički%20fakultet,%20Rijeka&t=&z=17&ie=UTF8&iwloc=&output=embed"
+            frameborder="0"
+            allowFullScreen="yes"
+          ></iframe>
+
+          {/* <form>
             <input
               type="email"
               name="email"
@@ -22,7 +41,7 @@ function Footer() {
             <Button linkon="0" buttonstyle="btn--outline">
               Prijavite se na newsletter
             </Button>
-          </form>
+          </form> */}
         </div>
       </section>
 

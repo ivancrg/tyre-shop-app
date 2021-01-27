@@ -88,13 +88,13 @@ function Navbar() {
                 className="nav-links-mobile"
                 onClick={closeMobileMenu}
               >
-                PRIJAVA
+                ADMIN
               </Link>
             </li>
           </ul>
           {button && (
             <Button linkon="1" linkpath="/Login" buttonstyle="btn--outline">
-              PRIJAVA
+              ADMIN
             </Button>
           )}
         </div>

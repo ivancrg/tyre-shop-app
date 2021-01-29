@@ -12,16 +12,6 @@ function Footer() {
         <p className="footer-subscription-text">RIJEKA</p>
 
         <div className="input-areas">
-          {/* <iframe
-            src="https://www.google.com/maps/embed/v1/view?key=AIzaSyB5_nIY9l799L4oBO88HSpPO_uN_RquEG4&center=-33.8569,151.2152&zoom=18&maptype=satellite"
-            title="Naša lokacija"
-            frameBorder="0"
-            style={{ border: 0 }}
-            allowFullScreen=""
-            aria-hidden="false"
-            tabIndex="0"
-          /> */}
-
           <iframe
             width="75%"
             height="300px"
